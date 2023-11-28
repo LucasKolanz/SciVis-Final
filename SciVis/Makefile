@@ -29,7 +29,7 @@ MOC = /home/lucas/Qt/6.6.0/gcc_64/libexec/moc
 EXEC = scivis.x
 
 # Default target
-all: $(EXEC)
+all: ui_SciVis.h $(EXEC) 
 
 # Linking the executable
 $(EXEC): $(OBJECTS)
@@ -49,6 +49,6 @@ ui_SciVis.h: $(UI_FILES)
 
 # Clean
 clean:
-	rm -f $(OBJECTS) $(EXEC) $(MOC_SOURCES)
+	rm -f $(OBJECTS) $(EXEC) $(MOC_SOURCES) ui_*.h
 
 

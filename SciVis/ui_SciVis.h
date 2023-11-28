@@ -63,7 +63,7 @@ public:
     {
         if (SciVisClass->objectName().isEmpty())
             SciVisClass->setObjectName("SciVisClass");
-        SciVisClass->resize(906, 755);
+        SciVisClass->resize(1080, 755);
         centralWidget = new QWidget(SciVisClass);
         centralWidget->setObjectName("centralWidget");
         horizontalLayout_2 = new QHBoxLayout(centralWidget);
@@ -129,42 +129,42 @@ public:
         pushButton_code1 = new QPushButton(groupBox_4);
         pushButton_code1->setObjectName("pushButton_code1");
 
-        formLayout->setWidget(0, QFormLayout::LabelRole, pushButton_code1);
+        formLayout->setWidget(0, QFormLayout::FieldRole, pushButton_code1);
 
         pushButton_code2 = new QPushButton(groupBox_4);
         pushButton_code2->setObjectName("pushButton_code2");
 
-        formLayout->setWidget(0, QFormLayout::FieldRole, pushButton_code2);
+        formLayout->setWidget(1, QFormLayout::FieldRole, pushButton_code2);
 
         pushButton_code3 = new QPushButton(groupBox_4);
         pushButton_code3->setObjectName("pushButton_code3");
 
-        formLayout->setWidget(1, QFormLayout::LabelRole, pushButton_code3);
+        formLayout->setWidget(2, QFormLayout::FieldRole, pushButton_code3);
 
         pushButton_code4 = new QPushButton(groupBox_4);
         pushButton_code4->setObjectName("pushButton_code4");
 
-        formLayout->setWidget(1, QFormLayout::FieldRole, pushButton_code4);
+        formLayout->setWidget(3, QFormLayout::FieldRole, pushButton_code4);
 
         pushButton_code5 = new QPushButton(groupBox_4);
         pushButton_code5->setObjectName("pushButton_code5");
 
-        formLayout->setWidget(2, QFormLayout::LabelRole, pushButton_code5);
+        formLayout->setWidget(4, QFormLayout::FieldRole, pushButton_code5);
 
         pushButton_code6 = new QPushButton(groupBox_4);
         pushButton_code6->setObjectName("pushButton_code6");
 
-        formLayout->setWidget(2, QFormLayout::FieldRole, pushButton_code6);
+        formLayout->setWidget(5, QFormLayout::FieldRole, pushButton_code6);
 
         pushButton_code7 = new QPushButton(groupBox_4);
         pushButton_code7->setObjectName("pushButton_code7");
 
-        formLayout->setWidget(3, QFormLayout::LabelRole, pushButton_code7);
+        formLayout->setWidget(6, QFormLayout::FieldRole, pushButton_code7);
 
         pushButton_code8 = new QPushButton(groupBox_4);
         pushButton_code8->setObjectName("pushButton_code8");
 
-        formLayout->setWidget(3, QFormLayout::FieldRole, pushButton_code8);
+        formLayout->setWidget(7, QFormLayout::FieldRole, pushButton_code8);
 
 
         verticalLayout->addWidget(groupBox_4);

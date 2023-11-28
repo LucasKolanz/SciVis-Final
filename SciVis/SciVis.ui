@@ -6,7 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>906</width>
+    <!-- <width>906</width> -->
+    <width>1080</width>
     <height>755</height>
    </rect>
   </property>
@@ -79,56 +80,56 @@
             <string>Run</string>
            </property>
            <layout class="QFormLayout" name="formLayout">
-            <item row="0" column="0">
+            <item row="0" column="1">
              <widget class="QPushButton" name="pushButton_code1">
               <property name="text">
                <string>Code 1</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
+            <item row="1" column="1">
              <widget class="QPushButton" name="pushButton_code2">
               <property name="text">
                <string>Code 2</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
+            <item row="2" column="1">
              <widget class="QPushButton" name="pushButton_code3">
               <property name="text">
                <string>Code 3</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
+            <item row="3" column="1">
              <widget class="QPushButton" name="pushButton_code4">
               <property name="text">
                <string>Code 4</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
+            <item row="4" column="1">
              <widget class="QPushButton" name="pushButton_code5">
               <property name="text">
                <string>Code 5</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
+            <item row="5" column="1">
              <widget class="QPushButton" name="pushButton_code6">
               <property name="text">
                <string>Code 6</string>
               </property>
              </widget>
             </item>
-            <item row="3" column="0">
+            <item row="6" column="1">
              <widget class="QPushButton" name="pushButton_code7">
               <property name="text">
                <string>Code 7</string>
               </property>
              </widget>
             </item>
-            <item row="3" column="1">
+            <item row="7" column="1">
              <widget class="QPushButton" name="pushButton_code8">
               <property name="text">
                <string>Code 8</string>

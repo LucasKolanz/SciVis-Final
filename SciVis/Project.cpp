@@ -12,11 +12,7 @@ extern Polyhedron* poly;
 extern std::vector<POLYLINE> polylines;
 // std::vector<CPOINT> points;
 
-void GLWidget::algorithm1() 
-{
-	
-}
-void GLWidget::algorithm2() 
+void GLWidget::algorithm1() //toggle 100 evenly spaced contour lines, critical pt contour lines
 {
 	if (polylines.size() > 0)
 	{
@@ -24,17 +20,17 @@ void GLWidget::algorithm2()
 	}
 	else
 	{
-		int tot_lines = 100;
-		double max, min, range, value;
-		findMinMax(min, max);
-		range = max - min;
-		range = max - min;
-		for (int i = 0; i < tot_lines; ++i)
-		{
-			value = (i * 1.0) * (range / tot_lines) + min;
-			//std::cout << value << std::endl;
-			drawContourLine(value, icVector3(0.0,0.0,0.0), false);
-		}
+		drawAllLines();
+	}
+	update();
+}
+void GLWidget::algorithm2() //toggle field/contour line height
+{
+	fieldHeight();
+	if (polylines.size() > 0)
+	{
+		polylines.clear();
+		GLWidget::algorithm1();
 	}
 	update();
 }
@@ -42,13 +38,7 @@ void GLWidget::algorithm3() {
 
 }
 void GLWidget::algorithm4() {
-	// contHeight();
-	if (polylines.size() > 0)
-	{
-		GLWidget::algorithm2();
-	}
-	fieldHeight();
-	update();
+	
 }
 void GLWidget::algorithm5() {
 	qDebug() << 5;
@@ -63,38 +53,50 @@ void GLWidget::algorithm8() {
 	qDebug() << 8;
 }
 
-// void drawAllLines()
-
-void contHeight()
-{	
-	double max, min;
+void drawAllLines()
+{
+	int tot_lines = 100;
+	double max, min, range, value;
 	findMinMax(min, max);
-	for (auto& polyline : polylines) 
+	range = max - min;
+	range = max - min;
+	for (int i = 0; i < tot_lines; ++i)
 	{
-		for (auto& vertex : polyline.m_vertices)
-		{
-			// auto& vertex = polylines->vlist[i];
-			if (contHeightOn)
-			{
-				// polyline.m_vertex->z = 0; 
-				vertex.z = 0;
-			}
-			else
-			{
-				double s_v = 10;//vertex.scalar;
-
-				double l = (s_v - min) / (max - min);
-				// polyline.vertex->z = l*10; 
-				vertex.z = l*10;
-			}
-		}
+		value = (i * 1.0) * (range / tot_lines) + min;
+		drawContourLine(value, icVector3(0.0,0.0,0.0), false);
 	}
-	// for (auto i = 0; i < polylines->nverts; i++)
-	// {
-		
-	// }
-	contHeightOn = !contHeightOn;
 }
+
+// void contHeight()
+// {	
+// 	double max, min;
+// 	findMinMax(min, max);
+// 	for (auto& polyline : polylines) 
+// 	{
+// 		for (auto& vertex : polyline.m_vertices)
+// 		{
+// 			// auto& vertex = polylines->vlist[i];
+// 			if (contHeightOn)
+// 			{
+// 				// polyline.m_vertex->z = 0; 
+// 				vertex.z = 0;
+// 			}
+// 			else
+// 			{
+// 				double s_v = 10;//vertex.scalar;
+
+// 				double l = (s_v - min) / (max - min);
+// 				// polyline.vertex->z = l*10; 
+// 				vertex.z = l*10;
+// 			}
+// 		}
+// 	}
+// 	// for (auto i = 0; i < polylines->nverts; i++)
+// 	// {
+		
+// 	// }
+// 	contHeightOn = !contHeightOn;
+// }
 
 void fieldHeight()
 {
@@ -111,7 +113,6 @@ void fieldHeight()
 		else
 		{
 			double s_v = vertex->scalar;
-
 			double l = (s_v - min) / (max - min);
 			vertex->z = l*10;
 		}
