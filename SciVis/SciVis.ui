@@ -83,35 +83,35 @@
             <item row="0" column="1">
              <widget class="QPushButton" name="pushButton_code1">
               <property name="text">
-               <string>Code 1</string>
+               <string>Contours</string>
               </property>
              </widget>
             </item>
             <item row="1" column="1">
              <widget class="QPushButton" name="pushButton_code2">
               <property name="text">
-               <string>Code 2</string>
+               <string>Height</string>
               </property>
              </widget>
             </item>
             <item row="2" column="1">
              <widget class="QPushButton" name="pushButton_code3">
               <property name="text">
-               <string>Code 3</string>
+               <string>Rainbow Map</string>
               </property>
              </widget>
             </item>
             <item row="3" column="1">
              <widget class="QPushButton" name="pushButton_code4">
               <property name="text">
-               <string>Code 4</string>
+               <string>Bicolor Map</string>
               </property>
              </widget>
             </item>
             <item row="4" column="1">
              <widget class="QPushButton" name="pushButton_code5">
               <property name="text">
-               <string>Code 5</string>
+               <string>Greyscale Map</string>
               </property>
              </widget>
             </item>
