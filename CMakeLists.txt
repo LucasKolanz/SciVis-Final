@@ -25,4 +25,9 @@ set(CMAKE_AUTOUIC ON)
 add_executable(scivis.x ${SOURCES})
 
 target_include_directories(scivis.x PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/${ProjFolder})
-target_link_libraries(scivis.x Qt6::Widgets Qt6::Gui Qt6::OpenGLWidgets GL GLU GLEW)
+if(WIN32)
+    target_link_libraries(scivis.x Qt6::Widgets Qt6::Gui Qt6::OpenGLWidgets opengl32 glew32) # Add other libraries as needed
+elseif(UNIX AND NOT APPLE)
+    target_link_libraries(scivis.x Qt6::Widgets Qt6::Gui Qt6::OpenGLWidgets GL GLU GLEW) # Add other libraries as needed
+endif()
+
