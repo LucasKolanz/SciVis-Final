@@ -3,6 +3,10 @@
 
 #include <QOpenGLWidget>
 #include <QKeyEvent>
+// #include "libraries/glew-2.1.0/include/GL/glew.h"
+
+
+
 class GLWidget : public QOpenGLWidget
 {
 	Q_OBJECT

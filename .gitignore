@@ -1,33 +1,43 @@
-# Prerequisites
-*.d
+# CMake generated files and directories
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.make
 
 # Compiled Object files
-*.slo
-*.lo
 *.o
 *.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
 *.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
 *.a
-*.lib
+*.la
+*.lo
+*.dll
+*.dylib
 
-# Executables
+# Compiled binary and executable files
+*/[Bb]in/
+*/[Bb]uild/
+*/[Bb]uild/*
+!*/[Bb]uild/glew32.dll
+*/[Dd]ebug/
+*/[Rr]elease/
 *.exe
 *.out
-*.app
-*.x
+
+# Editor files and directories
+*~
+.*.swp
+.*.swo
+.vscode/
+.idea/
+
+# Dependency directories (e.g., if you're using Conan, vcpkg or similar)
+# Uncomment or add as needed
+# conanbuildinfo.*
+# vcpkg_installed/
+
+# Miscellaneous files
+.DS_Store
+Thumbs.db

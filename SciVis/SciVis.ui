@@ -118,7 +118,7 @@
             <item row="5" column="1">
              <widget class="QPushButton" name="pushButton_code6">
               <property name="text">
-               <string>Code 6</string>
+               <string>Critical Points</string>
               </property>
              </widget>
             </item>

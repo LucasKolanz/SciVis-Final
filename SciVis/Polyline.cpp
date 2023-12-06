@@ -2,9 +2,10 @@
 ///////////////////////////////////////////////////////////
 // #include "gl/glew.h"
 #include "libraries/glew-2.1.0/include/GL/glew.h"
+#include <iostream>
 ///////////////////////////////////////////////////////////
 
-#define EPSILON 1.0e-5
+#define EPSILON 1.0e-6
 /*
 In computer graphics, a polyline is a continuous line 
 that is composed of one or more connected straight line segments, 
@@ -81,7 +82,8 @@ void lookUpTable(
 	const Vertex&v1, 
 	const Vertex&v2,
 	const Vertex&v3,
-	const double&thres) {
+	const double&thres,
+	bool saddle) {
 	r.reserve(2);
 	int id = 0;
 	if (v0.scalar <= thres + EPSILON) {
@@ -126,17 +128,51 @@ void lookUpTable(
 		// v2 - v3 //v0 - v3
 		center = v0.scalar + v1.scalar + v2.scalar + v3.scalar;
 		center /= 4;
-		if (center <= thres) {
-			r.push_back(linearInterpolateByScalar(v0, v1, thres));
-			r.push_back(linearInterpolateByScalar(v1, v2, thres));
-			r.push_back(linearInterpolateByScalar(v2, v3, thres));
-			r.push_back(linearInterpolateByScalar(v0, v3, thres));
+		
+		if (saddle)
+		{
+			if (center <= thres)
+			{
+				// std::cout << "BELOW" << std::endl;
+				r.push_back(linearInterpolateByScalar(v0, v1, thres));
+				r.push_back(linearInterpolateByScalar(v1, v2, thres));
+				r.push_back(linearInterpolateByScalar(v2, v3, thres));
+				r.push_back(linearInterpolateByScalar(v0, v1, thres));
+				/*r.push_back(linearInterpolateByScalar(v0, v1, thres));
+				r.push_back(linearInterpolateByScalar(v2, v3, thres));
+				r.push_back(linearInterpolateByScalar(v3, v0, thres));
+				r.push_back(linearInterpolateByScalar(v1, v2, thres));*/
+			}
+			else
+			{
+				// std::cout << "ABOVE" << std::endl;
+
+				r.push_back(linearInterpolateByScalar(v0, v1, thres));
+				r.push_back(linearInterpolateByScalar(v2, v3, thres));
+				r.push_back(linearInterpolateByScalar(v1, v2, thres));
+				r.push_back(linearInterpolateByScalar(v3, v0, thres));
+				//r.push_back(linearInterpolateByScalar(v0, v1, thres));
+				//r.push_back(linearInterpolateByScalar(v2, v3, thres));
+				//r.push_back(linearInterpolateByScalar(v3, v0, thres));
+				//r.push_back(linearInterpolateByScalar(v1, v2, thres));
+			}
 		}
-		else {
-			r.push_back(linearInterpolateByScalar(v0, v1, thres));
-			r.push_back(linearInterpolateByScalar(v0, v3, thres));
-			r.push_back(linearInterpolateByScalar(v1, v2, thres));
-			r.push_back(linearInterpolateByScalar(v2, v3, thres));
+		else
+		{
+			if (center <= thres) {
+				r.push_back(linearInterpolateByScalar(v0, v1, thres));
+				r.push_back(linearInterpolateByScalar(v1, v2, thres));
+				r.push_back(linearInterpolateByScalar(v2, v3, thres));
+				r.push_back(linearInterpolateByScalar(v0, v3, thres));
+				std::cerr<<"case 5 center<=thres"<<std::endl;
+			}
+			else {
+				r.push_back(linearInterpolateByScalar(v0, v1, thres));
+				r.push_back(linearInterpolateByScalar(v0, v3, thres));
+				r.push_back(linearInterpolateByScalar(v1, v2, thres));
+				r.push_back(linearInterpolateByScalar(v2, v3, thres));
+				std::cerr<<"case 5 center>thres"<<std::endl;
+			}
 		}
 		break;
 	case 6:
@@ -164,17 +200,58 @@ void lookUpTable(
 		// v1 - v2 //v2- v3
 		center = v0.scalar + v1.scalar + v2.scalar + v3.scalar;
 		center /= 4;
-		if (center <= thres) {
-			r.push_back(linearInterpolateByScalar(v0, v1, thres));
-			r.push_back(linearInterpolateByScalar(v0, v3, thres));
-			r.push_back(linearInterpolateByScalar(v1, v2, thres));
-			r.push_back(linearInterpolateByScalar(v2, v3, thres));
+		
+		if (saddle)
+		{
+			if (center <= thres)//correct
+			{
+				/*r.push_back(linearInterpolateByScalar(v0, v1, thres));
+				r.push_back(linearInterpolateByScalar(v0, v3, thres));
+				r.push_back(linearInterpolateByScalar(v1, v2, thres));
+				r.push_back(linearInterpolateByScalar(v2, v3, thres));*/
+				r.push_back(linearInterpolateByScalar(v0, v1, thres));
+				r.push_back(linearInterpolateByScalar(v2, v3, thres));
+				r.push_back(linearInterpolateByScalar(v0, v3, thres));
+				r.push_back(linearInterpolateByScalar(v1, v2, thres));
+
+			}
+			else//correct
+			{
+				/*r.push_back(linearInterpolateByScalar(v0, v1, thres));
+				r.push_back(linearInterpolateByScalar(v1, v2, thres));
+				r.push_back(linearInterpolateByScalar(v2, v3, thres));
+				r.push_back(linearInterpolateByScalar(v0, v3, thres));*/
+				r.push_back(linearInterpolateByScalar(v0, v1, thres));
+				r.push_back(linearInterpolateByScalar(v2, v3, thres));
+				r.push_back(linearInterpolateByScalar(v3, v0, thres));
+				r.push_back(linearInterpolateByScalar(v1, v2, thres));
+			}
 		}
-		else {
-			r.push_back(linearInterpolateByScalar(v0, v1, thres));
-			r.push_back(linearInterpolateByScalar(v1, v2, thres));
-			r.push_back(linearInterpolateByScalar(v2, v3, thres));
-			r.push_back(linearInterpolateByScalar(v0, v3, thres));
+		else
+		{
+			// std::cerr<<"center, thres: "<<center<<", "<<thres<<std::endl
+			if (center <= thres) {
+				r.push_back(linearInterpolateByScalar(v0, v1, thres));
+				r.push_back(linearInterpolateByScalar(v0, v3, thres));
+				r.push_back(linearInterpolateByScalar(v1, v2, thres));
+				r.push_back(linearInterpolateByScalar(v2, v3, thres));
+				// r.push_back(linearInterpolateByScalar(v0, v1, thres));
+				// r.push_back(linearInterpolateByScalar(v0, v3, thres));
+				// r.push_back(linearInterpolateByScalar(v1, v2, thres));
+				// r.push_back(linearInterpolateByScalar(v2, v3, thres));
+				std::cerr<<"case 10 center<=thres"<<std::endl;
+			}
+			else {
+				// r.push_back(linearInterpolateByScalar(v0, v3, thres));
+				// r.push_back(linearInterpolateByScalar(v0, v1, thres));
+				// r.push_back(linearInterpolateByScalar(v1, v2, thres));
+				// r.push_back(linearInterpolateByScalar(v2, v3, thres));
+				r.push_back(linearInterpolateByScalar(v0, v1, thres));
+				r.push_back(linearInterpolateByScalar(v1, v2, thres));
+				r.push_back(linearInterpolateByScalar(v2, v3, thres));
+				r.push_back(linearInterpolateByScalar(v0, v3, thres));
+				std::cerr<<"case 10 center>thres"<<std::endl;
+			}
 		}
 		
 		break;
@@ -233,7 +310,7 @@ void marchingSquare(
 			*poly.qlist[i]->verts[1],
 			*poly.qlist[i]->verts[2],
 			*poly.qlist[i]->verts[3],
-			thres);
+			thres,saddle);
 		// lookUpTable(r,
 		// 	*poly.qlist[i]->verts[0],
 		// 	*poly.qlist[i]->verts[1],

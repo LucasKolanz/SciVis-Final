@@ -26,6 +26,7 @@
 
 Polyhedron* poly = nullptr;
 std::vector<POLYLINE> polylines;
+std::vector<CPOINT> points;
 
 /*scene related variables*/
 const float zoomspeed = 0.9;
@@ -67,6 +68,7 @@ void display_selected_quad(Polyhedron* poly);
 
 /*display vis results*/
 void display_polyhedron(Polyhedron* poly);
+void display_crit_points();
 
 
 /******************************************************************************
@@ -202,7 +204,6 @@ Init scene
 ******************************************************************************/
 
 void init(void) {
-
 	mat_ident(rotmat);
 
 	/* select clearing color */
@@ -375,6 +376,49 @@ void display_selected_quad(Polyhedron* this_poly)
 	}
 	glEnd();
 }
+
+// /******************************************************************************
+// Display Critical points
+// ******************************************************************************/
+void display_crit_points()
+{
+	glDisable(GL_POLYGON_OFFSET_FILL);
+	glEnable(GL_DEPTH_TEST);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glShadeModel(GL_SMOOTH);
+
+	GLUquadric* quadric = gluNewQuadric();
+	for (auto& sp : points)
+	{
+		glPushMatrix();
+		glTranslated(sp.m_pos.x, sp.m_pos.y, sp.m_pos.z);
+		icVector3 color(0.0, 0.0, 0.0);
+		if (sp.type == 3)//saddle
+		{
+			color.x = 1.0;
+			color.y = 0.0;
+			color.z = 1.0;
+		}
+		else if (sp.type == 2) //max
+		{
+			color.x = 1.0;
+			color.y = 0.0;
+			color.z = 0.0;
+		}
+		else if (sp.type == 1) //min
+		{
+			color.x = 0.0;
+			color.y = 0.0;
+			color.z = 0.0;
+		}
+		glColor3f(color.x, color.y, color.z);
+		gluSphere(quadric, sp.m_weight/10,16,16);
+		glPopMatrix();
+	}
+	gluDeleteQuadric(quadric);
+
+}
+
 
 /******************************************************************************
 Diaplay selected vertex
@@ -799,6 +843,8 @@ void GLWidget::paintGL() {
 	/*display the mesh*/
 	display_polyhedron(poly);
 
+	display_crit_points();
+
 	/*display selected elements*/
 	display_selected_vertex(poly);
 	display_selected_quad(poly);
@@ -819,6 +865,6 @@ void GLWidget::initializeGL() {
 		printf("%s", glewGetErrorString(err));
 	}
 
-	openFile("./data/scalar_data/r14.ply");
+	openFile("./data/scalar_data/r12.ply");
 	init();
 }

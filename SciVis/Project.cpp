@@ -10,7 +10,10 @@
 
 extern Polyhedron* poly;
 extern std::vector<POLYLINE> polylines;
-// std::vector<CPOINT> points;
+extern std::vector<CPOINT> points;
+extern int display_mode;
+extern void display_crit_points();
+
 
 void GLWidget::algorithm1() //toggle 100 evenly spaced contour lines, critical pt contour lines
 {
@@ -32,48 +35,70 @@ void GLWidget::algorithm2() //toggle field/contour line height
 		polylines.clear();
 		GLWidget::algorithm1();
 	}
+	if (points.size() > 0)
+	{
+		points.clear();
+		GLWidget::algorithm6();
+	}
 	update();
 }
 void GLWidget::algorithm3() 
 {
-	if (rainbowMapOn)
+	if (display_mode == 3)
 	{
-		vertexColor();
+		if (rainbowMapOn)
+		{
+			vertexColor();
+		}
+		else
+		{
+			rainbowMap();
+		}
+		toggleMapBool(rainbow);
+		update();
 	}
-	else
-	{
-		rainbowMap();
-	}
-	toggleMapBool(rainbow);
-	update();
 }
 void GLWidget::algorithm4() 
 {
-	if (bicolorMapOn)
+	if (display_mode == 3)
 	{
-		vertexColor();
+		if (bicolorMapOn)
+		{
+			vertexColor();
+		}
+		else
+		{
+			bicolorMap();
+		}
+		toggleMapBool(bicolor);
+		update();
 	}
-	else
-	{
-		bicolorMap();
-	}
-	toggleMapBool(bicolor);
-	update();
 }
 void GLWidget::algorithm5() {
-	if (greyscaleMapOn)
+	if (display_mode == 3)
 	{
-		vertexColor();
+		if (greyscaleMapOn)
+		{
+			vertexColor();
+		}
+		else
+		{
+			greyscaleMap();
+		}
+		toggleMapBool(greyscale);
+		update();
+	}
+}
+void GLWidget::algorithm6() {
+	if (points.size() > 0)
+	{
+		points.clear();
 	}
 	else
 	{
-		greyscaleMap();
+		plotCriticalPoints();
 	}
-	toggleMapBool(greyscale);
 	update();
-}
-void GLWidget::algorithm6() {
-	qDebug() << 6;
 }
 void GLWidget::algorithm7() {
 	qDebug() << 7;
@@ -176,14 +201,12 @@ void bicolorMap()
 		vertex->R = c.x;
 		vertex->G = c.y;
 		vertex->B = c.z;
-
 	}
 }
 
 void greyscaleMap()
 {
 	double max, min;
-	//TEST ME
 	findMinMax(min, max);
 
 	for (auto i = 0; i < poly->nverts; i++)
@@ -208,7 +231,6 @@ icVector3 rainbowColorFromScalar(double scalar)
 	HSV.y = 1;
 	HSV.z = 1;
 
-	//NEED TO IMPLEMENT
 	HSVtoRGB(HSV, c);
 	return c;
 }
@@ -365,6 +387,7 @@ void drawAllLines()
 		value = (i * 1.0) * (range / tot_lines) + min;
 		drawContourLine(value, icVector3(0.0,0.0,0.0), false);
 	}
+	criticalContours();
 }
 
 void drawContourLine(double v, icVector3 rgb,int saddle_index)
@@ -378,3 +401,355 @@ void drawContourLine(double v, icVector3 rgb,int saddle_index)
 		polylines.push_back(polyline);
 	}
 }
+
+double findCriticalPoint(Quad* quad, double& x0, double& y0, bool& test, bool &saddle)
+{
+	//Find x and y values of quad
+	double x1, x2, y1, y2,f11,f21,f22,f12;
+	x1 = quad->verts[0]->x >= quad->verts[1]->x ? quad->verts[1]->x : quad->verts[0]->x;
+	x1 = x1 >= quad->verts[2]->x ? quad->verts[2]->x : x1;
+	x2 = quad->verts[0]->x < quad->verts[1]->x ? quad->verts[1]->x : quad->verts[0]->x;
+	x2 = x2 < quad->verts[2]->x ? quad->verts[2]->x : x2;
+
+	y1 = quad->verts[0]->y >= quad->verts[1]->y ? quad->verts[1]->y : quad->verts[0]->y;
+	y1 = y1 >= quad->verts[2]->y ? quad->verts[2]->y : y1;
+	y2 = quad->verts[0]->y < quad->verts[1]->y ? quad->verts[1]->y : quad->verts[0]->y;
+	y2 = y2 < quad->verts[2]->y ? quad->verts[2]->y : y2;
+
+	for (int i = 0; i <4; i++)
+	{
+		if (quad->verts[i]->x == x1 && quad->verts[i]->y == y1)
+		{
+			f11 = quad->verts[i]->scalar;
+			//std::cout <<f11<< " f11 i is " << i << std::endl;
+		}
+		else if (quad->verts[i]->x == x2 && quad->verts[i]->y == y1)
+		{
+			f21 = quad->verts[i]->scalar;
+			//std::cout << f21 << " f21 i is " << i << std::endl;
+		}
+		else if (quad->verts[i]->x == x2 && quad->verts[i]->y == y2)
+		{
+			f22 = quad->verts[i]->scalar;
+			//std::cout << f22 << " f22 i is " << i << std::endl;
+		}
+		else if (quad->verts[i]->x == x1 && quad->verts[i]->y == y2)
+		{
+			f12 = quad->verts[i]->scalar;
+			//std::cout << f12 << " f12 i is " << i << std::endl;
+		}
+	}
+	
+	x0 = (x2 * f11 - x1 * f21 - x2 * f12 + x1 * f22) / (f11 - f21 - f12 + f22);
+	y0 = (y2 * f11 - y2 * f21 - y1 * f12 + y1 * f22) / (f11 - f21 - f12 + f22);
+
+	/*std::cout << x1 << ',' << x0 << ',' << x2 << std::endl;
+	std::cout << y1<< ',' <<y0 << ',' <<y2 << std::endl;*/
+	
+
+	saddle = false;
+	if (x1 <= x0 && x2 >= x0 && y1 <= y0 && y2 >= y0)
+	{
+
+		//std::cout << "THIS ONE: " << fxy(x0, y0, x1, y1, x2, y2, f11, f21, f12, f22) << std::endl;
+		//drawContourLine(fxy(x0,y0,x1,y1,x2,y2,f11,f21,f12,f22), icVector3(1.0, 0.0, 0.0));
+		double fxy0, fyx0,fxx0,fyy0;
+		fxy0 = fxy(x0, y0, x1, y1, x2, y2, f11, f21, f12, f22);
+		fyx0 = fyx(x0, y0, x1, y1, x2, y2, f11, f21, f12, f22);
+		fxx0 = fxx(x0, y0, x1, y1, x2, y2, f11, f21, f12, f22);
+		fyy0 = fyy(x0,y0,x1,y1,x2,y2,f11,f21,f12,f22);
+
+		double det_hessian = fxx0 * fyy0 - fxy0 * fyx0;
+
+		if (det_hessian < 0) //Saddle pt
+		{
+			saddle = true;
+		}
+		else
+		{
+			if (fxx0 > 0)
+			{
+				std::cout << "found an additional local min" << std::endl;
+			}
+			else if (fxx0 < 0)
+			{
+				std::cout << "found an additional local MAX" << std::endl;
+			}
+			saddle = false;
+		}
+
+		test = true;
+	}
+	else
+	{
+		test = false;
+	}
+	
+
+	return fofxy(x0, y0, x1, y1, x2, y2, f11, f21, f12, f22);
+}
+
+double fofxy(double x, double y, double x1, double y1,
+	double x2, double y2,double f11, double f21, double f12, double f22)
+{
+	double t1, t2, t3, t4,d,denomrecip;
+
+	denomrecip = 1 / ((x2-x1) * (y2-y1));
+
+	t1 = (x2-x)*(y2-y) * f11;
+	t2 = (x - x1) * (y2 - y) * f21;
+	t3 = (x2 - x) * (y - y1) * f12;
+	t4 = (x - x1) * (y - y1) * f22;
+	return (t1 + t2 + t3 + t4)*denomrecip;
+}
+
+double fxx(double x, double y, double x1, double y1,
+	double x2, double y2, double f11, double f21, double f12, double f22)
+{
+	double t1, t2, t3, t4, d, denomrecip;
+
+	denomrecip = 1 / ((x2 - x1) * (y2 - y1));
+
+	t1 = (-1) * (y2 - y) * f11;
+	t2 = (1) * (y2 - y) * f21;
+	t3 = (-1) * (y - y1) * f12;
+	t4 = (1) * (y - y1) * f22;
+	return (t1 + t2 + t3 + t4)*denomrecip;
+}
+
+
+double fyy(double x, double y, double x1, double y1,
+	double x2, double y2, double f11, double f21, double f12, double f22)
+{
+	double t1, t2, t3, t4, d, denomrecip;
+
+	denomrecip = 1 / ((x2 - x1) * (y2 - y1));
+
+	t1 = (x2 - x) * (-1) * f11;
+	t2 = (x - x1) * (-1) * f21;
+	t3 = (x2 - x) * (1) * f12;
+	t4 = (x - x1) * (1) * f22;
+	return (t1 + t2 + t3 + t4)*denomrecip;
+}
+
+double fxy(double x, double y, double x1, double y1,
+	double x2, double y2, double f11, double f21, double f12, double f22)
+{
+	/*double t1, t2, t3, t4, d, denomrecip;
+
+	denomrecip = 1 / ((x2 - x1) * (y2 - y1));
+
+	t1 = (-1) * (y2 - y) * f11;
+	t2 = (1) * (y2 - y) * f21;
+	t3 = (-1) * (y - y1) * f12;
+	t4 = (1) * (y - y1) * f22;
+	return (t1 + t2 + t3 + t4) * denomrecip;*/
+	return fyx(x, y, x1, y1, x2, y2, f11, f21, f12, f22);
+}
+
+double fyx(double x, double y, double x1, double y1,
+	double x2, double y2, double f11, double f21, double f12, double f22)
+{
+	double t1, t2, t3, t4, d, denomrecip;
+
+	denomrecip = 1 / ((x2 - x1) * (y2 - y1));
+
+	t1 = (-1) * (-1) * f11;
+	t2 = (1) * (-1) * f21;
+	t3 = (-1) * (1) * f12;
+	t4 = (1) * (1) * f22;
+	return (t1 + t2 + t3 + t4) * denomrecip;
+}
+
+void cpheight(std::vector<POLYLINE> polylines)
+{
+	double max, min,i;
+	i = 0;
+	findMinMax(min, max);
+	for (auto& polyline : polylines)
+	{
+		i += 1;
+		for (auto& vert : polyline.m_vertices)
+		{
+			vert.z = 10* (polyline.m_value - min) / (max - min);
+		}
+		
+	}
+}
+
+void criticalContours()
+{
+	double x0, y0;
+	x0 = 0.0;
+	y0 = 0.0;
+	int j = 0;
+	for (int i = 0; i < poly->nquads; i++)
+	{
+		bool test, saddle;
+		double value = findCriticalPoint(poly->qlist[i], x0, y0, test, saddle);
+		if (test)
+		{
+			/*CPOINT point;
+			point.m_rgb.x = 1.0;
+			point.m_rgb.z = 1.0;
+			point.m_pos.x = x0;
+			point.m_pos.y = y0;
+			point.m_pos.z = 0;
+			if (saddle)
+			{
+				point.type = 3;
+			}
+			points.push_back(point);*/
+			//std::cout << "HEWRE: " << i<<','<<x0<<','<<y0 << std::endl;
+			if (saddle)
+			{
+
+				// if (j == 1)
+				// {
+				// 	std::cout << "START PROBLEM CONTOUR" << std::endl;
+				// }
+				std::cerr<<"j, value: "<<j<<", "<<value<<std::endl;
+				drawContourLine(value, icVector3(0.0, 0.0, 0.0), i);
+
+				// if (j == 1)
+				// {
+				// 	std::cout << "END PROBLEM CONTOUR" << std::endl;
+				// }
+
+			}
+			j += 1;
+
+		}
+	}
+}
+
+
+
+void plotCriticalPoints()
+{
+	//local min
+	for (int i = 0; i < poly->nverts; i++)
+	{
+		auto v = poly->vlist[i]->scalar;
+		int num = poly->vlist[i]->nquads;
+		if (num < 4)
+		{
+			continue;
+		}
+
+		//if (i == 100)
+		//{
+		//	v = -100;
+		//}
+
+		bool flag_rej = false;
+		for (int q = 0; q < 4; q++)
+		{
+			auto quad = poly->vlist[i]->quads[q];
+			for (int j = 0; j < 4; j++)
+			{
+				if (quad->verts[j]->scalar<v)
+				{
+					flag_rej = true;
+					break;
+				}
+			}
+			if (flag_rej)
+				break;
+		}
+		if (!flag_rej)
+		{
+			//This is local  min
+			CPOINT point;
+			point.m_rgb.x = 1.0;
+			point.m_pos.x = poly->vlist[i]->x;
+			point.m_pos.y = poly->vlist[i]->y;
+			point.m_pos.z = poly->vlist[i]->z;
+
+			point.type = 1;
+			points.push_back(point);
+			// std::cout << "MIN FOUND AT " << i << std::endl;
+		}
+	}
+
+	//local max
+	for (int i = 0; i < poly->nverts; i++)
+	{
+		auto v = poly->vlist[i]->scalar;
+		int num = poly->vlist[i]->nquads;
+		if (num < 4)
+		{
+			continue;
+		}
+
+		//if (i == 200)
+		//{
+		//	v = 100;
+		//}
+
+		bool flag_rej = false;
+		int queue;
+		for (int q = 0; q < 4; q++)
+		{
+			auto quad = poly->vlist[i]->quads[q];
+			for (int j = 0; j < 4; j++)
+			{
+				if (quad->verts[j]->scalar > v)
+				{
+					flag_rej = true;
+					break;
+				}
+			}
+			if (flag_rej)
+				break;
+		}
+		if (!flag_rej)
+		{
+			//This is local  max
+			CPOINT point;
+			point.m_rgb.x = 1.0;
+			point.m_pos.x = poly->vlist[i]->x;
+			point.m_pos.y = poly->vlist[i]->y;
+			point.m_pos.z = poly->vlist[i]->z;
+			point.type = 2;
+			points.push_back(point);
+			// std::cout << "max FOUND AT " << i<<',' << std::endl;
+		}
+	}
+
+	//saddles
+	double x0, y0;
+	double max, min, range, value;
+	findMinMax(min, max);
+	range = max - min;
+	for (int i = 0; i < poly->nquads; i++)
+	{
+		bool test, saddle;
+
+		double value = findCriticalPoint(poly->qlist[i], x0, y0, test, saddle);
+		if (test)
+		{
+			CPOINT point;
+			point.m_rgb.x = 1.0;
+			point.m_rgb.z = 1.0;
+			point.m_pos.x = x0;
+			point.m_pos.y = y0;
+			if (fieldHeightOn)
+			{
+				point.m_pos.z = ((value - min) / range) * 10;
+			}
+			else
+			{
+				point.m_pos.z = 0;
+			}
+			if (saddle)
+			{
+				point.type = 3;
+			}
+			points.push_back(point);
+		}
+	}
+	// display_crit_points();
+}
+
+
