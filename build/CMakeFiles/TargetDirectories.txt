@@ -1,0 +1,3 @@
+C:/Users/kolanz/Documents/GitHub/SciVis-Final/build/CMakeFiles/scivis.x.dir
+C:/Users/kolanz/Documents/GitHub/SciVis-Final/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/kolanz/Documents/GitHub/SciVis-Final/build/CMakeFiles/ZERO_CHECK.dir
