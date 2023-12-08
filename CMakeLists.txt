@@ -32,9 +32,10 @@ add_executable(scivis.x ${SOURCES})
 target_include_directories(scivis.x PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/${ProjFolder})
 if(WIN32)
     target_link_libraries(scivis.x Qt6::Widgets Qt6::Gui Qt6::OpenGLWidgets opengl32 glew32) # Add other libraries as needed
+	add_custom_command(TARGET scivis.x POST_BUILD
+    	COMMAND "${QT_BIN_DIR}/windeployqt" --dir $<TARGET_FILE_DIR:scivis.x> $<TARGET_FILE:scivis.x>)
 elseif(UNIX AND NOT APPLE)
     target_link_libraries(scivis.x Qt6::Widgets Qt6::Gui Qt6::OpenGLWidgets GL GLU GLEW) # Add other libraries as needed
 endif()
 
-add_custom_command(TARGET scivis.x POST_BUILD
-    COMMAND "${QT_BIN_DIR}/windeployqt" --dir $<TARGET_FILE_DIR:scivis.x> $<TARGET_FILE:scivis.x>)
+

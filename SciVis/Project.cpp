@@ -101,6 +101,7 @@ void GLWidget::algorithm6() {
 	update();
 }
 void GLWidget::algorithm7() {
+	// plotVertexPoints();
 	qDebug() << 7;
 }
 void GLWidget::algorithm8() {

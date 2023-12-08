@@ -53,6 +53,9 @@ Polyhedron::Polyhedron(FILE *file)
 				setup_property_ply(in_ply, &vert_props[4]);
 				setup_property_ply(in_ply, &vert_props[5]);
 				setup_property_ply(in_ply, &vert_props[6]);
+				setup_property_ply(in_ply, &vert_props[7]);
+				setup_property_ply(in_ply, &vert_props[8]);
+				setup_property_ply(in_ply, &vert_props[9]);
 
 				vert_other = get_other_properties_ply(in_ply,
 					offsetof(Vertex_io, other_props));
@@ -67,6 +70,10 @@ Polyhedron::Polyhedron(FILE *file)
 					vlist[j]->vx = vert.vx;
 					vlist[j]->vy = vert.vy;
 					vlist[j]->vz = vert.vz;
+
+					vlist[j]->R = vert.R;
+					vlist[j]->G = vert.G;
+					vlist[j]->B = vert.B;
 
 					vlist[j]->scalar = vert.s;
 

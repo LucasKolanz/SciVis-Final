@@ -13,6 +13,7 @@ typedef struct Vertex_io {
 	double x, y, z;
 	double vx, vy, vz;
 	double s;
+	double R,G,B;
 	void *other_props;       /* other properties */
 } Vertex_io;
 
@@ -38,6 +39,9 @@ PlyProperty vert_props[] = { /* list of property information for a vertex */
 	{"vy", Float64, Float64, offsetof(Vertex_io,vy), 0, 0, 0, 0},
 	{"vz", Float64, Float64, offsetof(Vertex_io,vz), 0, 0, 0, 0},
 	{"s", Float64, Float64, offsetof(Vertex_io,s), 0, 0, 0, 0},
+	{"red", Float64, Float64, offsetof(Vertex_io,R), 0, 0, 0, 0},
+	{"green", Float64, Float64, offsetof(Vertex_io,G), 0, 0, 0, 0},
+	{"blue", Float64, Float64, offsetof(Vertex_io,B), 0, 0, 0, 0},
 };
 
 PlyProperty face_props[] = { /* list of property information for a face */

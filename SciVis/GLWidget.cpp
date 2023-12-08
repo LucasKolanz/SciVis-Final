@@ -419,6 +419,53 @@ void display_crit_points()
 
 }
 
+// /******************************************************************************
+// Display Critical points
+// ******************************************************************************/
+void display_vert_points()
+{
+	glDisable(GL_POLYGON_OFFSET_FILL);
+	glEnable(GL_DEPTH_TEST);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glShadeModel(GL_SMOOTH);
+
+	// std::cerr<<"DISP VERT PTS"<<std::endl;
+
+	GLUquadric* quadric = gluNewQuadric();
+	int step = poly->nverts/100000;
+	for (int i = 0; i < poly->nverts; i += step)
+	{
+		Vertex *v = poly->vlist[i];
+		glPushMatrix();
+		glTranslated(v->x, v->y, v->z);
+		// icVector3 color(0.0, 0.0, 0.0);
+		// if (sp.type == 3)//saddle
+		// {
+		// 	color.x = 1.0;
+		// 	color.y = 0.0;
+		// 	color.z = 1.0;
+		// }
+		// else if (sp.type == 2) //max
+		// {
+		// 	color.x = 1.0;
+		// 	color.y = 0.0;
+		// 	color.z = 0.0;
+		// }
+		// else if (sp.type == 1) //min
+		// {
+		// 	color.x = 0.0;
+		// 	color.y = 0.0;
+		// 	color.z = 0.0;
+		// }
+		glColor3f(v->R*1.0/255.0, v->G*1.0/255.0, v->B*1.0/255.0);
+		// std::cerr<<v->x<<','<<v->y<<','<<v->z<<std::endl;
+		gluSphere(quadric, 3,16,16);
+		glPopMatrix();
+	}
+	gluDeleteQuadric(quadric);
+
+}
+
 
 /******************************************************************************
 Diaplay selected vertex
@@ -844,6 +891,7 @@ void GLWidget::paintGL() {
 	display_polyhedron(poly);
 
 	display_crit_points();
+	display_vert_points();
 
 	/*display selected elements*/
 	display_selected_vertex(poly);
@@ -865,6 +913,7 @@ void GLWidget::initializeGL() {
 		printf("%s", glewGetErrorString(err));
 	}
 
-	openFile("./data/scalar_data/r12.ply");
+	// openFile("../SciVis/data/scalar_data/r12.ply");
+	openFile("../SciVis/data/NEON_data/NEON_D16_ABBY_DP1_554000_5069000_test.ply");
 	init();
 }
