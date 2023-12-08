@@ -16,6 +16,8 @@ Makefile
 *.dll
 *.dylib
 
+*SciVis/data/NEON_data*
+
 # Compiled binary and executable files
 */[Bb]in/
 */[Bb]uild/
