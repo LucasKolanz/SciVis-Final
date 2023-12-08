@@ -12,6 +12,7 @@ Eugene Zhang 2005
 
 #include "ply.h"
 #include "icVector.H"
+#include <iostream>
 
 const double EPS = 1.0e-6;
 const double PI=3.1415926535898;
@@ -112,6 +113,14 @@ public:
 	void calc_bounding_sphere();
 	void calc_face_normals_and_area();
 	void calc_edge_length();
+	void ptcloud_to_quads(double dx, double dy);
+	void maxmins(double &maxx,double &maxy,double &maxz,\
+						double &minx,double &miny,double &minz);
+
+	int pos_to_index(double x, double y,\
+						double maxx,double maxy,double minx,\
+						double miny, int nx,int ny);
+
 
 	/*utilties*/
 	Quad* find_common_edge(Quad*, Vertex*, Vertex*);

@@ -10,6 +10,7 @@ The polygon data structure
 #include <math.h>
 #include <fstream>
 #include <iostream>
+#include <vector>
 #include "ply.h"
 #include "icVector.H"
 #include "icMatrix.H"
@@ -881,4 +882,121 @@ void Polyhedron::average_normals()
 	}
 }
 
+void Polyhedron::maxmins(double &maxx,double &maxy,double &maxz,double &minx,double &miny,double &minz)
+{
+	minx = std::numeric_limits<double>::max();
+	miny = minz = minx;
+	maxx = maxy = maxz = -minx;
 
+	#pragma omp parallel for default(none) reduction(max:maxx,maxy,maxz) reduction(min:minx,miny,minz) shared(vlist)
+	for (int i = 0; i < nverts; ++i)
+	{
+		Vertex *v = vlist[i];
+		if (v->x > maxx)
+		{
+			maxx = v->x;
+		}
+		else if (v->x < minx)
+		{
+			minx = v->x;
+		}
+		if (v->y > maxy)
+		{
+			maxy = v->y;
+		}
+		else if (v->y < miny)
+		{
+			miny = v->y;
+		}
+		if (v->z > maxz)
+		{
+			maxz = v->z;
+		}
+		else if (v->z < minz)
+		{
+			minz = v->z;
+		}
+	}
+}
+
+int Polyhedron::pos_to_index(double x, double y,\
+	double maxx,double maxy,double minx,\
+	double miny, int nx,int ny)
+{
+	// Calculate the width and height of each grid cell
+    double gridWidth = (maxx - minx) / nx;
+    double gridHeight = (maxy - miny) / ny;
+
+    // Calculate the position's relative location within the grid
+    double relX = x - minx;
+    double relY = y - miny;
+
+    // Calculate grid indices
+    int i = relX / gridWidth;
+    int j = relY / gridHeight;
+
+    // Clamp the values to grid boundaries
+    if (i >= nx) i = nx - 1;
+    if (j >= ny) j = ny - 1;
+    if (i < 0) i = 0;
+    if (j < 0) j = 0;
+ 
+	return ny*j + i;
+}
+
+void Polyhedron::ptcloud_to_quads(double dx,double dy)
+{
+	double maxx,maxy,maxz,minx,miny,minz;
+	maxmins(maxx,maxy,maxz,minx,miny,minz);
+
+	int nx,ny;
+
+	nx = ((maxx-minx)/dx);
+	ny = ((maxy-miny)/dy);
+
+	// std::cerr<<maxx<<','<<maxy<<','<<maxz<<std::endl;
+	// std::cerr<<minx<<','<<miny<<','<<minz<<std::endl;
+
+	double* gridz = new double[nx*ny];
+	int* ngridz = new int[nx*ny];
+	icVector3* gridrgb = new icVector3[nx*ny];
+	int* ngridrgb = new int[nx*ny];
+
+	// std::vector<std::vector<double>> gridz(nx,std::vector<double>(ny));
+	// std::vector<std::vector<icVector3>> gridrgb(nx,std::vector<icVector3>(ny));
+
+	#pragma omp parallel for default(none) shared(gridz,gridrgb)
+	for (int i = 0; i < nx*ny; ++i)
+	{
+		gridz[i] = 0;
+		gridrgb[i] = (0.0,0.0,0.0);
+	}
+
+
+	// for (int i = 0; i < nx; ++i)
+	// {
+	// 	for (int j = 0; j < ny; ++j)
+	// 	{
+	// #pragma omp parallel for default(none) shared(gridz,gridrgb)
+	for (int k = 0; k < nverts; k++)
+	{
+		int index = pos_to_index(vlist[k]->x,vlist[k]->y,maxx,maxy,minx,miny,nx,ny);
+		gridz[index] += vlist[k]->z;
+		gridrgb[index] += (vlist[k]->R,vlist[k]->G,vlist[k]->B);
+
+		ngridz[index] ++;
+		ngridrgb[index] ++;
+	}
+
+	#pragma omp parallel for 
+	for (int i = 0; i < nx*ny; ++i)
+	{
+		gridz[i] /= ngridz[i];
+		gridrgb[i] /= ngridrgb[i];
+	}
+
+	//MAKE NEW pOLY or something
+
+	// for (int i = 0; i < )
+
+}

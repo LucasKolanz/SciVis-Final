@@ -12,7 +12,7 @@ extern Polyhedron* poly;
 extern std::vector<POLYLINE> polylines;
 extern std::vector<CPOINT> points;
 extern int display_mode;
-extern void display_crit_points();
+// extern void display_crit_points();
 
 
 void GLWidget::algorithm1() //toggle 100 evenly spaced contour lines, critical pt contour lines
@@ -102,7 +102,8 @@ void GLWidget::algorithm6() {
 }
 void GLWidget::algorithm7() {
 	// plotVertexPoints();
-	qDebug() << 7;
+	poly->ptcloud_to_quads(10,10);
+	update();
 }
 void GLWidget::algorithm8() {
 	qDebug() << 8;
