@@ -19,6 +19,8 @@ public slots:
 	void on_pushButton_display_solid_clicked();
 	void on_pushButton_display_wireframes_clicked();
 	void on_pushButton_display_vertex_clicked();
+	void on_pushButton_display_pointcloud_clicked();
+
 
 	void on_pushButton_code1_clicked();
 	void on_pushButton_code2_clicked();

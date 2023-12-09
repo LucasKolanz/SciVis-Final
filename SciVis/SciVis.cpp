@@ -1,6 +1,7 @@
 #include "SciVis.h"
 #include <QFileDialog>
 extern int display_mode;
+
 SciVis::SciVis(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -31,7 +32,11 @@ void SciVis::on_pushButton_display_wireframes_clicked() {
 }
 void SciVis::on_pushButton_display_vertex_clicked() {
 	display_mode = 3;
-	ui.GLWindow->vertexColor();
+	// ui.GLWindow->vertexColor();
+	ui.GLWindow->update();
+}
+void SciVis::on_pushButton_display_pointcloud_clicked() {
+	ui.GLWindow->togglePtcloud();
 	ui.GLWindow->update();
 }
 void SciVis::on_pushButton_code1_clicked() {

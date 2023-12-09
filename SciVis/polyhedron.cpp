@@ -72,9 +72,10 @@ Polyhedron::Polyhedron(FILE *file)
 					vlist[j]->vy = vert.vy;
 					vlist[j]->vz = vert.vz;
 
-					vlist[j]->R = vert.R;
-					vlist[j]->G = vert.G;
-					vlist[j]->B = vert.B;
+
+					vlist[j]->R = vert.R*1.0/255.0;
+					vlist[j]->G = vert.G*1.0/255.0;
+					vlist[j]->B = vert.B*1.0/255.0;
 
 					vlist[j]->scalar = vert.s;
 
@@ -137,21 +138,22 @@ Polyhedron::Polyhedron(FILE *file)
 
 		/* get rid of quads that use the same vertex more than once */
 
-		for (i = nquads - 1; i >= 0; i--) {
-
-			Quad *quad = qlist[i];
-			Vertex *v0 = quad->verts[0];
-			Vertex *v1 = quad->verts[1];
-			Vertex *v2 = quad->verts[2];
-			Vertex *v3 = quad->verts[3];
-
-			if (v0 == v1 || v1 == v2 || v2 == v3 || v3 == v0) {
-				free(qlist[i]);
-				nquads--;
-				qlist[i] = qlist[nquads];
-			}
-		}
+		scrub_quads();
 	}
+}
+
+Polyhedron::Polyhedron(int numverts,int numedges,int numquads)
+{
+	nverts = max_verts = numverts;
+	nedges = numedges;
+	nquads = max_quads = numquads;
+
+	vlist = new Vertex * [max_verts];
+	qlist = new Quad * [max_quads];
+	
+	init_verts();
+	// init_quads();
+	// scrub_quads();
 }
 
 Polyhedron::Polyhedron()
@@ -161,6 +163,60 @@ Polyhedron::Polyhedron()
 
 	vlist = new Vertex * [max_verts];
 	qlist = new Quad * [max_quads];
+
+}
+
+void Polyhedron::scrub_quads()
+{
+	for (int i = nquads - 1; i >= 0; i--) 
+	{
+		Quad *quad = qlist[i];
+		Vertex *v0 = quad->verts[0];
+		Vertex *v1 = quad->verts[1];
+		Vertex *v2 = quad->verts[2];
+		Vertex *v3 = quad->verts[3];
+
+		if (v0 == v1 || v1 == v2 || v2 == v3 || v3 == v0) {
+			free(qlist[i]);
+			nquads--;
+			qlist[i] = qlist[nquads];
+		}
+	}
+}
+
+void Polyhedron::init_verts()
+{
+	for (int j = 0; j < nverts; j++) 
+	{
+		vlist[j] = new Vertex(0, 0, 0);
+		// vlist[j]->vx = 0;
+		// vlist[j]->vy = 0;
+		// vlist[j]->vz = 0;
+
+		// vlist[j]->R = 0;
+		// vlist[j]->G = 0;
+		// vlist[j]->B = 0;
+
+		// vlist[j]->scalar = 0;
+
+		// vlist[j]->other_props = vert.other_props;
+	}
+}
+
+void Polyhedron::init_quads()
+{
+	// for (j = 0; j < elem_count; j++) 
+	// {
+
+	// 	/* copy info from the "face" structure */
+	// 	qlist[j] = new Quad;
+	// 	// qlist[j]->verts[0] = face.verts[0];
+	// 	qlist[j]->verts[0] = (Vertex *)face.verts[0];
+	// 	qlist[j]->verts[1] = (Vertex *)face.verts[1];
+	// 	qlist[j]->verts[2] = (Vertex *)face.verts[2];
+	// 	qlist[j]->verts[3] = (Vertex *)face.verts[3];
+	// 	qlist[j]->other_props = face.other_props;
+	// }
 }
 
 void Polyhedron::write_info()
@@ -944,7 +1000,15 @@ int Polyhedron::pos_to_index(double x, double y,\
 	return ny*j + i;
 }
 
-void Polyhedron::ptcloud_to_quads(double dx,double dy)
+void Polyhedron::index_to_pos(int gridnx,int gridny, double minx, \
+	double miny, double gridw, double gridh,\
+	double &x, double &y)
+{
+	x = minx+gridnx*gridw;
+	y = miny+gridny*gridh;
+}
+
+Polyhedron* Polyhedron::ptcloud_to_quads(double dx,double dy)
 {
 	double maxx,maxy,maxz,minx,miny,minz;
 	maxmins(maxx,maxy,maxz,minx,miny,minz);
@@ -958,18 +1022,18 @@ void Polyhedron::ptcloud_to_quads(double dx,double dy)
 	// std::cerr<<minx<<','<<miny<<','<<minz<<std::endl;
 
 	double* gridz = new double[nx*ny];
-	int* ngridz = new int[nx*ny];
 	icVector3* gridrgb = new icVector3[nx*ny];
-	int* ngridrgb = new int[nx*ny];
+	int* ngrid = new int[nx*ny];
 
 	// std::vector<std::vector<double>> gridz(nx,std::vector<double>(ny));
 	// std::vector<std::vector<icVector3>> gridrgb(nx,std::vector<icVector3>(ny));
 
-	#pragma omp parallel for default(none) shared(gridz,gridrgb)
+	#pragma omp parallel for default(none) shared(gridz,gridrgb,ngrid)
 	for (int i = 0; i < nx*ny; ++i)
 	{
 		gridz[i] = 0;
 		gridrgb[i] = (0.0,0.0,0.0);
+		ngrid[i] = 0;
 	}
 
 
@@ -982,21 +1046,77 @@ void Polyhedron::ptcloud_to_quads(double dx,double dy)
 	{
 		int index = pos_to_index(vlist[k]->x,vlist[k]->y,maxx,maxy,minx,miny,nx,ny);
 		gridz[index] += vlist[k]->z;
-		gridrgb[index] += (vlist[k]->R,vlist[k]->G,vlist[k]->B);
+		gridrgb[index].x += vlist[k]->R;
+		gridrgb[index].y +=	vlist[k]->G;
+		gridrgb[index].z +=	vlist[k]->B;
 
-		ngridz[index] ++;
-		ngridrgb[index] ++;
+		ngrid[index] ++;
 	}
 
-	#pragma omp parallel for 
+	#pragma omp parallel for default(none) shared(gridz,gridrgb,ngrid)
 	for (int i = 0; i < nx*ny; ++i)
 	{
-		gridz[i] /= ngridz[i];
-		gridrgb[i] /= ngridrgb[i];
+		double g = ngrid[i];
+		gridz[i] /= g;
+		gridrgb[i].x /= g;
+		gridrgb[i].y /= g;
+		gridrgb[i].z /= g;
 	}
 
 	//MAKE NEW pOLY or something
+	int numverts,numedges,numquads;	
+	numverts = nx*ny;
+	numedges = 2*ny*nx-ny-nx;
+	numquads = (ny-1)*(nx-1);
+	Polyhedron* new_poly = new Polyhedron(numverts,numedges,numquads);
+
+	//Put in vertices
+	// #pragma omp parallel for 
+	for (int i = 0; i < numverts; ++i)
+	{
+		double x,y;
+		int gridy = std::floor(i/nx);
+		int gridx = i%nx;
+		index_to_pos(gridx,gridy, minx,miny,dx,dy,x,y);
+		Vertex* v = new_poly->vlist[i];
+		v->x = x;
+		v->y = y;
+		v->z = gridz[i];
+
+		std::cerr<<gridrgb[i].x<<','<<gridrgb[i].y<<','<<gridrgb[i].z<<std::endl;
+
+		v->R = gridrgb[i].x;
+		v->G = gridrgb[i].y;
+		v->B = gridrgb[i].z;		
+		v->scalar = gridz[i];
+	}
+
+	//Put in quads
+	#pragma omp parallel for default(none) shared(new_poly,nx)
+	for (int i = 0; i < numquads; ++i)
+	{
+		new_poly->qlist[i] = new Quad;
+
+		int quady = std::floor(i/(nx-1));
+		int quadx = i%(nx-1);
+
+		// if (i < 20)
+		// 	std::cerr<<i+quady<<", "<<i+quady+1<<", "<<i+nx+quady<<", "<<i+nx+quady+1<<std::endl;
+
+		new_poly->qlist[i]->verts[0] = new_poly->vlist[i+quady];
+		new_poly->qlist[i]->verts[1] = new_poly->vlist[i+1+quady];
+		new_poly->qlist[i]->verts[2] = new_poly->vlist[i+nx+quady+1];
+		new_poly->qlist[i]->verts[3] = new_poly->vlist[i+nx+quady];
+	}
+
+	new_poly->scrub_quads();
+	new_poly->initialize(); // initialize the mesh
+	new_poly->write_info();
 
 	// for (int i = 0; i < )
+	return new_poly;
 
 }
+
+// void index_to_pos(int gridnx,int gridny, double minx, \
+// 	double miny, double gridw, double gridh)

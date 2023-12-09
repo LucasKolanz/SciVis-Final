@@ -9,6 +9,8 @@
 #include <iostream>
 
 extern Polyhedron* poly;
+extern Polyhedron* poly2;
+extern Polyhedron* dummy_poly;
 extern std::vector<POLYLINE> polylines;
 extern std::vector<CPOINT> points;
 extern int display_mode;
@@ -101,13 +103,14 @@ void GLWidget::algorithm6() {
 	update();
 }
 void GLWidget::algorithm7() {
-	// plotVertexPoints();
-	poly->ptcloud_to_quads(10,10);
+	// trueColor();
 	update();
 }
 void GLWidget::algorithm8() {
 	qDebug() << 8;
 }
+
+
 
 ///////////////////////////////////////////////////////////////
 ////////Start Project 1 functions and helpers

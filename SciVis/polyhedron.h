@@ -113,13 +113,22 @@ public:
 	void calc_bounding_sphere();
 	void calc_face_normals_and_area();
 	void calc_edge_length();
-	void ptcloud_to_quads(double dx, double dy);
+	Polyhedron* ptcloud_to_quads(double dx,double dy);
 	void maxmins(double &maxx,double &maxy,double &maxz,\
 						double &minx,double &miny,double &minz);
 
 	int pos_to_index(double x, double y,\
 						double maxx,double maxy,double minx,\
 						double miny, int nx,int ny);
+
+	void index_to_pos(int gridnx,int gridny, double minx, \
+						double miny, double gridw, double gridh,\
+						double &x, double &y);
+
+	Polyhedron(int numverts,int numedges,int numquads);
+	void scrub_quads();
+	void init_verts();
+	void init_quads();
 
 
 	/*utilties*/

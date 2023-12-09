@@ -19,6 +19,7 @@ public:
 public:
 	bool m_select_face;
 	bool m_select_vertex;
+	bool pointcloudOn = true;
 
 	void openFile(const char* file);
 
@@ -32,6 +33,7 @@ public:
 	void algorithm8();
 
     void vertexColor();
+    void togglePtcloud();
 protected:
 
 	virtual void paintGL();

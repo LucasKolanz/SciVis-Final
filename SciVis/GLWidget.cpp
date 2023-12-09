@@ -25,6 +25,8 @@
 #include <qdebug.h>
 
 Polyhedron* poly = nullptr;
+Polyhedron* poly2 = nullptr;
+Polyhedron* dummy_poly = nullptr;
 std::vector<POLYLINE> polylines;
 std::vector<CPOINT> points;
 
@@ -46,6 +48,8 @@ display mode 2: show wireframes
 display mode 3: render each quad with colors of vertices
 */
 int display_mode = 1;
+
+bool pointcloudOn = true;
 
 /*User Interaction related variabes*/
 float s_old, t_old;
@@ -457,7 +461,7 @@ void display_vert_points()
 		// 	color.y = 0.0;
 		// 	color.z = 0.0;
 		// }
-		glColor3f(v->R*1.0/255.0, v->G*1.0/255.0, v->B*1.0/255.0);
+		glColor3f(v->R, v->G, v->B);
 		// std::cerr<<v->x<<','<<v->y<<','<<v->z<<std::endl;
 		gluSphere(quadric, 3,16,16);
 		glPopMatrix();
@@ -607,6 +611,22 @@ void GLWidget::vertexColor() {
 		}
 	}
 }
+
+// void GLWidget::trueColor() {
+
+// 	for (int i = 0; i < poly->nquads; i++) {
+// 		Quad* temp_q = poly->qlist[i];
+// 		for (int j = 0; j < 4; j++) {
+
+// 			Vertex* temp_v = temp_q->verts[j];
+
+// 			temp_v->R = int(temp_v->x / L) % 2 == 0 ? 1 : 0;
+// 			temp_v->G = int(temp_v->y / L) % 2 == 0 ? 1 : 0;
+// 			temp_v->B = 0.0;
+// 		}
+// 	}
+// }
+
 void GLWidget::keyPressEvent(QKeyEvent *event) {
 	int i;
 	/* set escape key to exit */
@@ -891,7 +911,10 @@ void GLWidget::paintGL() {
 	display_polyhedron(poly);
 
 	display_crit_points();
-	display_vert_points();
+	if (pointcloudOn)
+	{
+		display_vert_points();
+	}
 
 	/*display selected elements*/
 	display_selected_vertex(poly);
@@ -916,4 +939,16 @@ void GLWidget::initializeGL() {
 	// openFile("../SciVis/data/scalar_data/r12.ply");
 	openFile("../SciVis/data/NEON_data/NEON_D16_ABBY_DP1_554000_5069000_test.ply");
 	init();
+}
+
+void GLWidget::togglePtcloud() {
+	// plotVertexPoints();
+	if (poly2 == nullptr)
+	{
+		poly2=poly->ptcloud_to_quads(20,20);
+	}
+	dummy_poly = poly;
+	poly = poly2;
+	poly2 = dummy_poly;
+	pointcloudOn = !pointcloudOn;
 }
