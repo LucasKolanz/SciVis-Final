@@ -25,6 +25,7 @@ Makefile
 !*/[Bb]uild/glew32.dll
 */[Dd]ebug/
 */[Rr]elease/
+*/out/
 *.exe
 *.out
 
