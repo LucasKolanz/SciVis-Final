@@ -7,14 +7,14 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fPIC")
 
 set(ProjFolder "SciVis/")
 if(WIN32)
-	set(QT_PATH "C:/Qt/6.6.1/msvc2019_64")
-	set(QT_BIN_DIR "C:/Qt/6.6.1/msvc2019_64/bin")
+	set(QT_PATH "C:/Qt/6.6.1/msvc2019_64")#NEED PATH TO THIS QT FOLDER FOR LINUX
+	set(QT_BIN_DIR "C:/Qt/6.6.1/msvc2019_64/bin")#NEED PATH TO THIS QT FOLDER FOR LINUX
 	link_directories("${CMAKE_BINARY_DIR}/../SciVis/libraries/glew-2.1.0/lib/Release/x64")
 	link_directories("${CMAKE_BINARY_DIR}/../SciVis/libraries/freeglut-3.0.0/lib/x64")
 	message("freeglut library path: ${CMAKE_BINARY_DIR}/../SciVis/libraries/freeglut-3.0.0/lib/Release/x64")
 
 elseif(UNIX AND NOT APPLE)
-	set(QT_PATH "/home/lucas/Qt/6.6.0/gcc_64")
+	set(QT_PATH "/home/lucas/Qt/6.6.0/gcc_64") #NEED PATH TO THIS QT FOLDER FOR LINUX
 endif()
 
 # Find the necessary Qt package
