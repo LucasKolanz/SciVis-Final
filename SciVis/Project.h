@@ -47,3 +47,4 @@ double findCriticalPoint(Quad* quad, double& x0, double& y0, bool& test, bool &s
 // void display_crit_points();
 void plotCriticalPoints();
 void criticalContours();
+void Ncontours();

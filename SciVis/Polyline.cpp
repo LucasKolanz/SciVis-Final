@@ -164,14 +164,14 @@ void lookUpTable(
 				r.push_back(linearInterpolateByScalar(v1, v2, thres));
 				r.push_back(linearInterpolateByScalar(v2, v3, thres));
 				r.push_back(linearInterpolateByScalar(v0, v3, thres));
-				std::cerr<<"case 5 center<=thres"<<std::endl;
+				// std::cerr<<"case 5 center<=thres"<<std::endl;
 			}
 			else {
 				r.push_back(linearInterpolateByScalar(v0, v1, thres));
 				r.push_back(linearInterpolateByScalar(v0, v3, thres));
 				r.push_back(linearInterpolateByScalar(v1, v2, thres));
 				r.push_back(linearInterpolateByScalar(v2, v3, thres));
-				std::cerr<<"case 5 center>thres"<<std::endl;
+				// std::cerr<<"case 5 center>thres"<<std::endl;
 			}
 		}
 		break;
@@ -239,7 +239,7 @@ void lookUpTable(
 				// r.push_back(linearInterpolateByScalar(v0, v3, thres));
 				// r.push_back(linearInterpolateByScalar(v1, v2, thres));
 				// r.push_back(linearInterpolateByScalar(v2, v3, thres));
-				std::cerr<<"case 10 center<=thres"<<std::endl;
+				// std::cerr<<"case 10 center<=thres"<<std::endl;
 			}
 			else {
 				// r.push_back(linearInterpolateByScalar(v0, v3, thres));
@@ -250,7 +250,7 @@ void lookUpTable(
 				r.push_back(linearInterpolateByScalar(v1, v2, thres));
 				r.push_back(linearInterpolateByScalar(v2, v3, thres));
 				r.push_back(linearInterpolateByScalar(v0, v3, thres));
-				std::cerr<<"case 10 center>thres"<<std::endl;
+				// std::cerr<<"case 10 center>thres"<<std::endl;
 			}
 		}
 		

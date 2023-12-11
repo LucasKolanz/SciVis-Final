@@ -25,7 +25,8 @@ void GLWidget::algorithm1() //toggle 100 evenly spaced contour lines, critical p
 	}
 	else
 	{
-		drawAllLines();
+		Ncontours();
+		// drawAllLines();
 	}
 	update();
 }
@@ -388,7 +389,14 @@ double min(double m1, double m2, double m3)
 ////////Start Project 2 functions and helpers
 ///////////////////////////////////////////////////////////////
 
+
 void drawAllLines()
+{
+	Ncontours();
+	criticalContours();
+}
+
+void Ncontours()
 {
 	int tot_lines = 100;
 	double max, min, range, value;
@@ -400,7 +408,6 @@ void drawAllLines()
 		value = (i * 1.0) * (range / tot_lines) + min;
 		drawContourLine(value, icVector3(0.0,0.0,0.0), false);
 	}
-	criticalContours();
 }
 
 void drawContourLine(double v, icVector3 rgb,int saddle_index)
@@ -621,7 +628,7 @@ void criticalContours()
 				// {
 				// 	std::cout << "START PROBLEM CONTOUR" << std::endl;
 				// }
-				std::cerr<<"j, value: "<<j<<", "<<value<<std::endl;
+				// std::cerr<<"j, value: "<<j<<", "<<value<<std::endl;
 				drawContourLine(value, icVector3(0.0, 0.0, 0.0), i);
 
 				// if (j == 1)
