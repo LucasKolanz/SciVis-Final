@@ -11,8 +11,12 @@ Build:
 3) Open the SciVis.sln file with Visual Studio
 	Make sure you have the Qt VS Tools extension downloaded on your Visual Studio
 
-4) Make sure the build is set to "Release" and "x64" and hit the "Start Without Debugging" build option.
+4) Make sure you copy the NEON .ply data file into the folder "${path to program}SciVis-Final/SciVis/data/NEON_data"
+
+5) Set "scivis" as your Startup Project from the solution explorer menu
+
+5) Make sure the build is set to "Release" and "x64" and hit the "Start Without Debugging" build option.
 	If you get the message "Unable to start program . . . The system cannot find the file specified" then just get out
 	of Visual Studio and navigate to the folder the executable is in. It should be in "${path to program}SciVis-Final\build\Release
 
-5) Now you should have the scivis.exe file and be able to run it, hopefully.
+6) Now you should have the scivis.exe file and be able to run it, hopefully.

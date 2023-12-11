@@ -12,4 +12,6 @@ Build:
 3) now run the make file with the command "make"
 	Now you should have the file scivis.x in your build directory
 
-4) Run this new file with the command "./scivis.x"
+4) Make sure you copy the NEON .ply data file into the folder "${path to program}SciVis-Final/SciVis/data/NEON_data"
+
+5) Run this new file with the command "./scivis.x"
