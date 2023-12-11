@@ -175,12 +175,21 @@ void findMinMax(double& min, double& max)
 
 void rainbowMap()
 {
+	double max, min;
+	findMinMax(min, max);
+	double delta = max - min;
 	for (auto i = 0; i < poly->nverts; i++)
 	{
 		auto& vertex = poly->vlist[i];
 		double s_v = vertex->scalar;
 
-		icVector3 c = rainbowColorFromScalar(s_v);
+		icVector3 HSV, c;
+		// icVector3 c = rainbowColorFromScalar(s_v,max,min);
+		HSV.x = (s_v - min) * 300 / delta;
+		HSV.y = 1;
+		HSV.z = 1;
+
+		HSVtoRGB(HSV, c);
 
 		vertex->R = c.x;
 		vertex->G = c.y;
@@ -225,11 +234,9 @@ void greyscaleMap()
 	}
 }
 
-icVector3 rainbowColorFromScalar(double scalar)
+inline icVector3 rainbowColorFromScalar(double scalar,double max, double min)
 {
 	icVector3 HSV, c;
-	double max, min;
-	findMinMax(min, max);
 	double delta = max - min;
 	//This value needs to be linearly scaled from 0-300 from the delta value
 	//Don't go all the way to 300 because we want red to blue and 300-360 is magenta

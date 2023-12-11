@@ -11,7 +11,7 @@ enum colorMaps {rainbow,bicolor,greyscale};
 bool* colorMapBools[] = {&rainbowMapOn,&bicolorMapOn,&greyscaleMapOn};
 
 void drawContourLine(double v, icVector3 rgb,int saddle_index);
-icVector3 rainbowColorFromScalar(double scalar);
+inline icVector3 rainbowColorFromScalar(double scalar,double max, double min);
 
 // void contHeight();
 void fieldHeight();

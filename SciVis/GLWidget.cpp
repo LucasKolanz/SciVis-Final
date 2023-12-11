@@ -963,7 +963,7 @@ void GLWidget::togglePtcloud() {
 	// plotVertexPoints();
 	if (poly2 == nullptr)
 	{
-		poly2=poly->ptcloud_to_quads(1,1);
+		poly2=poly->ptcloud_to_quads(2.5,2.5);
 	}
 	dummy_poly = poly;
 	poly = poly2;
