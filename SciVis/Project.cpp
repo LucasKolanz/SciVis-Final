@@ -142,13 +142,14 @@ void fieldHeight()
 		auto& vertex = poly->vlist[i];
 		if (fieldHeightOn)
 		{
+			vertex->scalar = vertex->z;
 			vertex->z = 0;
 		}
 		else
 		{
-			double s_v = vertex->scalar;
-			double l = (s_v - min) / (max - min);
-			vertex->z = l*10;
+			// double s_v = vertex->scalar;
+			// double l = (s_v - min) / (max - min);
+			vertex->z = vertex->scalar;
 		}
 	}
 	fieldHeightOn = !fieldHeightOn;

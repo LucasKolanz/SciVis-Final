@@ -1,7 +1,7 @@
 #include "icVector.H"
 #include "Polyline.h"
 
-bool fieldHeightOn = false;
+bool fieldHeightOn = true;
 bool contHeightOn = false;
 bool rainbowMapOn = false;
 bool greyscaleMapOn = false;

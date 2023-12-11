@@ -23,6 +23,7 @@
 #include "Polyline.h"
 #include <iostream>
 #include <qdebug.h>
+#include <filesystem>
 
 Polyhedron* poly = nullptr;
 Polyhedron* poly2 = nullptr;
@@ -936,8 +937,11 @@ void GLWidget::initializeGL() {
 		printf("%s", glewGetErrorString(err));
 	}
 
+	std::string NEON_file = "../SciVis/data/NEON_data/NEON_D16_ABBY_DP1_554000_5069000_test.ply"; 
 	// openFile("../SciVis/data/scalar_data/r12.ply");
-	openFile("../SciVis/data/NEON_data/NEON_D16_ABBY_DP1_554000_5069000_test.ply");
+	// std::cerr<<std::filesystem::current_path()<<std::endl;
+	// getchar();
+	openFile(NEON_file.c_str());
 	init();
 }
 
@@ -945,7 +949,7 @@ void GLWidget::togglePtcloud() {
 	// plotVertexPoints();
 	if (poly2 == nullptr)
 	{
-		poly2=poly->ptcloud_to_quads(20,20);
+		poly2=poly->ptcloud_to_quads(1,1);
 	}
 	dummy_poly = poly;
 	poly = poly2;

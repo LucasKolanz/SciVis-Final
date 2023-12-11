@@ -1037,11 +1037,6 @@ Polyhedron* Polyhedron::ptcloud_to_quads(double dx,double dy)
 	}
 
 
-	// for (int i = 0; i < nx; ++i)
-	// {
-	// 	for (int j = 0; j < ny; ++j)
-	// 	{
-	// #pragma omp parallel for default(none) shared(gridz,gridrgb)
 	for (int k = 0; k < nverts; k++)
 	{
 		int index = pos_to_index(vlist[k]->x,vlist[k]->y,maxx,maxy,minx,miny,nx,ny);
@@ -1053,15 +1048,75 @@ Polyhedron* Polyhedron::ptcloud_to_quads(double dx,double dy)
 		ngrid[index] ++;
 	}
 
+	double z_shift = (maxz+minz)/2;
 	#pragma omp parallel for default(none) shared(gridz,gridrgb,ngrid)
 	for (int i = 0; i < nx*ny; ++i)
 	{
 		double g = ngrid[i];
-		gridz[i] /= g;
-		gridrgb[i].x /= g;
-		gridrgb[i].y /= g;
-		gridrgb[i].z /= g;
+		if (g != 0)
+		{
+			gridz[i] /= g;
+			// gridz[i] -= z_shift;
+			gridrgb[i].x /= g;
+			gridrgb[i].y /= g;
+			gridrgb[i].z /= g;
+		}
 	}
+
+
+	#pragma omp parallel for default(none) shared(gridz,gridrgb,ngrid)
+	for (int i = 0; i < nx*ny; ++i)
+	{
+		if (gridz[i] == 0)
+		{
+			//If there is no points in this grid space just take average of some two 
+			//adjacent vertices.
+
+			//test if this spot is on an edge
+			//if it is, take vertices on top and bottom
+			//if not, take vertices to either side
+			int m,n; //two grid indices for averaging
+		
+			if (i == 0)//check if i is bottom left corner
+			{
+				m = i+1;
+				n = i+nx;
+			}
+			else if (i == nx-1) //check if i is bottom right corner
+			{
+				m = i-1;
+				n = i+nx;
+			}
+			else if (i == (nx-1)*ny-1)//check if i is top left
+			{
+				m = i+1;
+				n = i-nx;
+			}
+			else if (i == nx*ny-1) //check if i is top right corner
+			{
+				m = i-1;
+				n = i-nx;
+			}
+			else if (i % (nx-1) == 0) //i is top or bottom fow
+			{
+				m = i+nx+1;
+				n = i+nx-1;
+			}
+			else
+			{
+				m = i+1;
+				n = i-1;
+			}
+
+			gridz[i] = (gridz[m]+gridz[n])/2;
+			gridrgb[i].x = (gridrgb[m].x+gridrgb[n].x)/2;
+			gridrgb[i].y = (gridrgb[m].y+gridrgb[n].y)/2;
+			gridrgb[i].z = (gridrgb[m].z+gridrgb[n].z)/2;
+			
+		}
+	}	
+
+
 
 	//MAKE NEW pOLY or something
 	int numverts,numedges,numquads;	
@@ -1071,28 +1126,61 @@ Polyhedron* Polyhedron::ptcloud_to_quads(double dx,double dy)
 	Polyhedron* new_poly = new Polyhedron(numverts,numedges,numquads);
 
 	//Put in vertices
-	// #pragma omp parallel for 
+	// #pragma omp parallel for default(none) shared(new_poly)
+
 	for (int i = 0; i < numverts; ++i)
 	{
-		double x,y;
-		int gridy = std::floor(i/nx);
-		int gridx = i%nx;
-		index_to_pos(gridx,gridy, minx,miny,dx,dy,x,y);
-		Vertex* v = new_poly->vlist[i];
-		v->x = x;
-		v->y = y;
-		v->z = gridz[i];
+		// if (gridz[i] > 0)
+		// {
+			double x,y;
+			int gridy = std::floor(i/nx);
+			int gridx = i%nx;
+			index_to_pos(gridx,gridy, minx,miny,dx,dy,x,y);
+			Vertex* v = new_poly->vlist[i];
+			v->x = x;
+			v->y = y;
+			v->z = gridz[i];
 
-		std::cerr<<gridrgb[i].x<<','<<gridrgb[i].y<<','<<gridrgb[i].z<<std::endl;
 
-		v->R = gridrgb[i].x;
-		v->G = gridrgb[i].y;
-		v->B = gridrgb[i].z;		
-		v->scalar = gridz[i];
+			// std::cerr<<gridrgb[i].x<<','<<gridrgb[i].y<<','<<gridrgb[i].z<<std::endl;
+
+			if (maxx < x || minx > x)
+			{
+				std::cerr<<"i: "<<i<<std::endl;
+				std::cerr<<x<<std::endl;
+				std::cerr<<y<<std::endl;
+				std::cerr<<gridz[i]<<std::endl;
+			}
+			else if (maxy < y || miny > y)
+			{				
+				std::cerr<<"i: "<<i<<std::endl;
+				std::cerr<<x<<std::endl;
+				std::cerr<<y<<std::endl;
+				std::cerr<<gridz[i]<<std::endl;
+			}
+			else if (maxz < gridz[i] || minz > gridz[i])
+			{				
+				std::cerr<<"i: "<<i<<std::endl;
+				std::cerr<<x<<std::endl;
+				std::cerr<<y<<std::endl;
+				std::cerr<<gridz[i]<<std::endl;
+			}
+
+			// std::cerr<<x<<','<<y<<','<<gridz[i]<<std::endl;
+
+
+			v->R = gridrgb[i].x;
+			v->G = gridrgb[i].y;
+			v->B = gridrgb[i].z;		
+			v->scalar = gridz[i];
+		// }
 	}
 
+	// std::cerr<<numquads<<std::endl;
+	// std::cerr<<numverts<<std::endl;
+	// std::cerr<<numquads-1+nx-1<<", "<<numquads-1+nx-1+1<<", "<<numquads-1+nx+nx-1<<", "<<numquads-1+nx+nx-1+1<<std::endl;
 	//Put in quads
-	#pragma omp parallel for default(none) shared(new_poly,nx)
+	// #pragma omp parallel for default(none) shared(new_poly,nx)
 	for (int i = 0; i < numquads; ++i)
 	{
 		new_poly->qlist[i] = new Quad;
@@ -1101,7 +1189,7 @@ Polyhedron* Polyhedron::ptcloud_to_quads(double dx,double dy)
 		int quadx = i%(nx-1);
 
 		// if (i < 20)
-		// 	std::cerr<<i+quady<<", "<<i+quady+1<<", "<<i+nx+quady<<", "<<i+nx+quady+1<<std::endl;
+			// std::cerr<<i+quady<<", "<<i+quady+1<<", "<<i+nx+quady<<", "<<i+nx+quady+1<<std::endl;
 
 		new_poly->qlist[i]->verts[0] = new_poly->vlist[i+quady];
 		new_poly->qlist[i]->verts[1] = new_poly->vlist[i+1+quady];
