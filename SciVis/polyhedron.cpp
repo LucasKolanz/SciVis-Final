@@ -122,18 +122,20 @@ Polyhedron::Polyhedron(FILE *file)
 
 		//////////////////////////////////////////////////////////////////////
 		/* fix up vertex pointers in quads */
-		// for (i = 0; i < nquads; i++) {
-		// 	qlist[i]->verts[0] = vlist[(int)qlist[i]->verts[0]];
-		// 	qlist[i]->verts[1] = vlist[(int)qlist[i]->verts[1]];
-		// 	qlist[i]->verts[2] = vlist[(int)qlist[i]->verts[2]];
-		// 	qlist[i]->verts[3] = vlist[(int)qlist[i]->verts[3]];
-		// }
-		for (i = 0; i < nquads; i++) {
-			qlist[i]->verts[0] = vlist[(size_t)qlist[i]->verts[0]];
-			qlist[i]->verts[1] = vlist[(size_t)qlist[i]->verts[1]];
-			qlist[i]->verts[2] = vlist[(size_t)qlist[i]->verts[2]];
-			qlist[i]->verts[3] = vlist[(size_t)qlist[i]->verts[3]];
-		}
+		#ifdef _WIN32	
+			for (i = 0; i < nquads; i++) {
+				qlist[i]->verts[0] = vlist[(int)qlist[i]->verts[0]];
+				qlist[i]->verts[1] = vlist[(int)qlist[i]->verts[1]];
+				qlist[i]->verts[2] = vlist[(int)qlist[i]->verts[2]];
+				qlist[i]->verts[3] = vlist[(int)qlist[i]->verts[3]];
+			}
+		#elif __linux__
+			for (i = 0; i < nquads; i++) {
+				qlist[i]->verts[0] = vlist[(size_t)qlist[i]->verts[0]];
+				qlist[i]->verts[1] = vlist[(size_t)qlist[i]->verts[1]];
+				qlist[i]->verts[2] = vlist[(size_t)qlist[i]->verts[2]];
+				qlist[i]->verts[3] = vlist[(size_t)qlist[i]->verts[3]];
+			}
 		//////////////////////////////////////////////////////////////////////
 
 		/* get rid of quads that use the same vertex more than once */
