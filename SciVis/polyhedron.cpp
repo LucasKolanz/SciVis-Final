@@ -947,7 +947,7 @@ void Polyhedron::maxmins(double &maxx,double &maxy,double &maxz,double &minx,dou
 	miny = minz = minx;
 	maxx = maxy = maxz = -minx;
 
-	#pragma omp parallel for default(none) reduction(max:maxx,maxy,maxz) reduction(min:minx,miny,minz) shared(vlist)
+	// #pragma omp parallel for default(none) reduction(max:maxx,maxy,maxz) reduction(min:minx,miny,minz) shared(vlist)
 	for (int i = 0; i < nverts; ++i)
 	{
 		Vertex *v = vlist[i];
@@ -1031,7 +1031,7 @@ Polyhedron* Polyhedron::ptcloud_to_quads(double dx,double dy)
 	// std::vector<std::vector<double>> gridz(nx,std::vector<double>(ny));
 	// std::vector<std::vector<icVector3>> gridrgb(nx,std::vector<icVector3>(ny));
 
-	#pragma omp parallel for default(none) shared(gridz,gridrgb,ngrid)
+	// #pragma omp parallel for default(none) shared(gridz,gridrgb,ngrid)
 	for (int i = 0; i < nx*ny; ++i)
 	{
 		gridz[i] = 0;
@@ -1052,7 +1052,7 @@ Polyhedron* Polyhedron::ptcloud_to_quads(double dx,double dy)
 	}
 
 	double z_shift = (maxz+minz)/2;
-	#pragma omp parallel for default(none) shared(gridz,gridrgb,ngrid)
+	// #pragma omp parallel for default(none) shared(gridz,gridrgb,ngrid)
 	for (int i = 0; i < nx*ny; ++i)
 	{
 		double g = ngrid[i];
@@ -1067,7 +1067,7 @@ Polyhedron* Polyhedron::ptcloud_to_quads(double dx,double dy)
 	}
 
 
-	#pragma omp parallel for default(none) shared(gridz,gridrgb,ngrid)
+	// #pragma omp parallel for default(none) shared(gridz,gridrgb,ngrid)
 	for (int i = 0; i < nx*ny; ++i)
 	{
 		if (gridz[i] == 0)

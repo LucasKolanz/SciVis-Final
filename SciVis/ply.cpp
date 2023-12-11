@@ -1364,11 +1364,12 @@ char *recreate_command_line (int argc, char *argv[])
     len += strlen(argv[i]) + 1;
 
 /////////////////////////////////////////////////////////
-  //ADDED CODE
+  #ifdef __linux__ 
   if (len == 0)
   {
     len ++;
   }
+  #endif
 /////////////////////////////////////////////////////////
   /* create empty line */
   line = (char *) malloc (sizeof(char) * len);
@@ -1761,24 +1762,27 @@ const char **get_words(FILE *fp, int *nwords, const char **orig_line)
   for (ptr = str, ptr2 = str_copy; *ptr != '\0'; ptr++, ptr2++) {
     *ptr2 = *ptr;
     /////////////////////////////////////////////////////////////////////
-    if (*ptr == '\t' || *ptr == '\r') {
-      *ptr = ' ';
-      *ptr2 = ' ';
-    }
-    else if (*ptr == '\n') {
-      *ptr = ' ';
-      *ptr2 = '\0';
-      break;
-    }
-    // if (*ptr == '\t') {
-    //   *ptr = ' ';
-    //   *ptr2 = ' ';
-    // }
-    // else if (*ptr == '\n') {
-    //   *ptr = ' ';
-    //   *ptr2 = '\0';
-    //   break;
-    // }
+    #ifdef _WIN32
+      if (*ptr == '\t') {
+        *ptr = ' ';
+        *ptr2 = ' ';
+      }
+      else if (*ptr == '\n') {
+        *ptr = ' ';
+        *ptr2 = '\0';
+        break;
+      }
+    #elif __linux__
+      if (*ptr == '\t' || *ptr == '\r') {
+        *ptr = ' ';
+        *ptr2 = ' ';
+      }
+      else if (*ptr == '\n') {
+        *ptr = ' ';
+        *ptr2 = '\0';
+        break;
+      }
+    #endif
     /////////////////////////////////////////////////////////////////////
   }
 
