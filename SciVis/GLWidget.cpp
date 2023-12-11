@@ -938,11 +938,25 @@ void GLWidget::initializeGL() {
 	}
 
 	std::string NEON_file = "../SciVis/data/NEON_data/NEON_D16_ABBY_DP1_554000_5069000_test.ply"; 
+	
+	if (std::filesystem::exists(NEON_file))
+	{
+		openFile(NEON_file.c_str());
+	}
+	else if (std::filesystem::exists("../"+NEON_file))
+	{
+		NEON_file = "../"+NEON_file;
+		openFile(NEON_file.c_str());
+	}
+	else
+	{
+		return;
+	}
+	init();
 	// openFile("../SciVis/data/scalar_data/r12.ply");
 	// std::cerr<<std::filesystem::current_path()<<std::endl;
 	// getchar();
-	openFile(NEON_file.c_str());
-	init();
+
 }
 
 void GLWidget::togglePtcloud() {
