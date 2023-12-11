@@ -136,6 +136,7 @@ Polyhedron::Polyhedron(FILE *file)
 				qlist[i]->verts[2] = vlist[(size_t)qlist[i]->verts[2]];
 				qlist[i]->verts[3] = vlist[(size_t)qlist[i]->verts[3]];
 			}
+		#endif
 		//////////////////////////////////////////////////////////////////////
 
 		/* get rid of quads that use the same vertex more than once */
