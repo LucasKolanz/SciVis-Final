@@ -12,6 +12,7 @@
 #include <string.h>
 #include <fstream>
 #include <vector>
+#include <algorithm>
 
 #include "glError.h"
 #include "ply.h"
@@ -931,27 +932,58 @@ void GLWidget::paintGL() {
 	CHECK_GL_ERROR();*/
 }
 
+std::vector<std::string> get_folder_contents(std::string folder)
+{
+	std::vector<std::string> files;
+
+    for (const auto& entry : std::filesystem::directory_iterator(folder)) {
+        files.push_back(entry.path().string());
+    }
+    return files;
+}
+
+std::string value_in_vector(const std::vector<std::string>& vec, std::string value) {
+	int length;
+	for (auto v : vec)
+	{
+		length = v.length();
+		if (v.substr(length-4) == value)
+		{
+			return v;
+		}
+	}
+	return "";
+}
+
 void GLWidget::initializeGL() {
 	GLenum err = glewInit();
 	if (err != GLEW_OK) {
 		printf("%s", glewGetErrorString(err));
 	}
-	
-	std::string NEON_file = "../SciVis/data/NEON_data/NEON_D16_ABBY_DP1_554000_5069000_test.ply"; 
-	
-	if (std::filesystem::exists(NEON_file))
+
+	std::string NEON_folder = "SciVis/data/NEON_data"; 
+
+	std::string NEON_file = ""; 
+
+	//find NEON_folder
+	int count = 0;
+	while(!std::filesystem::exists(NEON_folder) && count <= 5)
 	{
-		openFile(NEON_file.c_str());
+		NEON_folder = "../"+NEON_folder;
+		count++;
 	}
-	else if (std::filesystem::exists("../"+NEON_file))
+	if (std::filesystem::exists(NEON_folder))
 	{
-		NEON_file = "../"+NEON_file;
-		openFile(NEON_file.c_str());
+		NEON_file = value_in_vector(get_folder_contents(NEON_folder),".ply");
 	}
 	else
 	{
-		return;
+		std::cerr<<"ERROR: could not find .ply file in SciVis/data/NEON_data folder."<<std::endl;
+		exit(-3);
 	}
+
+	std::cerr<<NEON_file<<std::endl;
+	openFile(NEON_file.c_str());
 	init();
 	togglePtcloud();
 
