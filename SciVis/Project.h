@@ -15,7 +15,7 @@ inline icVector3 rainbowColorFromScalar(double scalar,double max, double min);
 
 // void contHeight();
 void fieldHeight();
-void drawAllLines();
+void drawAllLines(int num_conts);
 
 void rainbowMap();
 void greyscaleMap();
@@ -47,4 +47,4 @@ double findCriticalPoint(Quad* quad, double& x0, double& y0, bool& test, bool &s
 // void display_crit_points();
 void plotCriticalPoints();
 void criticalContours();
-void Ncontours();
+void Ncontours(int num_conts);

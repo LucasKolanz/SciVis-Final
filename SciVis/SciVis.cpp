@@ -6,6 +6,18 @@ SciVis::SciVis(QWidget *parent)
     : QMainWindow(parent)
 {
     ui.setupUi(this);
+
+    ui.doubleSpinBox_dx->setValue(ui.GLWindow->dx);
+    ui.doubleSpinBox_dy->setValue(ui.GLWindow->dy);
+    ui.spinBox_cont->setValue(ui.GLWindow->n_contours);
+
+	ui.doubleSpinBox_dx->setMaximum(MAX_DX); // Set maximum value
+    ui.doubleSpinBox_dx->setMinimum(MIN_DX); // Set minimum value
+	ui.doubleSpinBox_dy->setMaximum(MAX_DY); // Set maximum value
+	ui.doubleSpinBox_dy->setMinimum(MIN_DY); // Set minimum value
+	ui.spinBox_cont->setMaximum(MAX_CONTOURS); // Set maximum value
+	ui.spinBox_cont->setMinimum(MIN_CONTOURS); // Set minimum value
+
 }
 
 SciVis::~SciVis()
@@ -71,4 +83,20 @@ void SciVis::on_pushButton_code7_clicked() {
 void SciVis::on_pushButton_code8_clicked() {
 	ui.GLWindow->algorithm8();
 	ui.textEdit_output->append("run algorithm8!");
+}
+void SciVis::on_doubleSpinBox_dx_valueChanged(double value)
+{
+	ui.GLWindow->dx = value;
+}
+void SciVis::on_doubleSpinBox_dy_valueChanged(double value)
+{
+	ui.GLWindow->dy = value;
+}
+void SciVis::on_spinBox_cont_valueChanged(int value)
+{
+	ui.GLWindow->n_contours = value;
+}
+void SciVis::on_pushButton_apply_clicked()
+{
+	ui.GLWindow->reapply();
 }

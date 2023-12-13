@@ -25,8 +25,8 @@ void GLWidget::algorithm1() //toggle 100 evenly spaced contour lines, critical p
 	}
 	else
 	{
-		Ncontours();
-		// drawAllLines();
+		Ncontours(n_contours);
+		// drawAllLines(n_contours);
 	}
 	update();
 }
@@ -390,22 +390,21 @@ double min(double m1, double m2, double m3)
 ///////////////////////////////////////////////////////////////
 
 
-void drawAllLines()
+void drawAllLines(int num_conts)
 {
-	Ncontours();
+	Ncontours(num_conts);
 	criticalContours();
 }
 
-void Ncontours()
+void Ncontours(int num_conts)
 {
-	int tot_lines = 100;
 	double max, min, range, value;
 	findMinMax(min, max);
 	range = max - min;
 	range = max - min;
-	for (int i = 0; i < tot_lines; ++i)
+	for (int i = 0; i < num_conts; ++i)
 	{
-		value = (i * 1.0) * (range / tot_lines) + min;
+		value = (i * 1.0) * (range / num_conts) + min;
 		drawContourLine(value, icVector3(0.0,0.0,0.0), false);
 	}
 }

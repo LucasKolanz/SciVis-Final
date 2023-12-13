@@ -329,26 +329,54 @@ void Polyhedron::initialize()
 void Polyhedron::finalize() {
 
 	for (int i = 0; i < nquads; i++) {
-		//free(qlist[i]->other_props);
-		free(qlist[i]);
+		// delete qlist[i]->other_props;
+		delete qlist[i];
+		// qlist[i]->other_props = nullptr;
+		qlist[i] = nullptr;
+
+		// free(qlist[i]);
 	}
 	for (int i = 0; i < nedges; i++) {
-		free(elist[i]->quads);
-		free(elist[i]);
+		delete elist[i]->quads;
+		delete elist[i];
+		elist[i]->quads = nullptr;
+		elist[i] = nullptr;
+		// free(elist[i]->quads);
+		// free(elist[i]);
 	}
 	for (int i = 0; i < nverts; i++) {
-		free(vlist[i]->quads);
-		//free(vlist[i]->other_props);
-		free(vlist[i]);
+		// delete vlist[i]->other_props;
+		delete vlist[i]->quads;
+		delete vlist[i];
+		// vlist[i]->other_props = nullptr;
+		vlist[i]->quads = nullptr;
+		vlist[i] = nullptr;
+		// free(vlist[i]->quads);
+		// free(vlist[i]);
 	}
 
-	free(qlist);
-	free(elist);
-	free(vlist);
-	if (!vert_other)
-		free(vert_other);
-	if (!face_other)
-		free(face_other);
+	delete qlist;
+	delete elist;
+	delete vlist;
+
+	qlist = nullptr;
+	elist = nullptr;
+	vlist	= nullptr;
+
+	if (vert_other)
+		delete vert_other;
+		vert_other = nullptr;
+	if (face_other)
+		delete face_other;
+	face_other = nullptr;
+
+	// free(qlist);
+	// free(elist);
+	// free(vlist);
+	// if (!vert_other)
+	// 	free(vert_other);
+	// if (!face_other)
+	// 	free(face_other);
 }
 
 /******************************************************************************
@@ -1147,27 +1175,27 @@ Polyhedron* Polyhedron::ptcloud_to_quads(double dx,double dy)
 
 			// std::cerr<<gridrgb[i].x<<','<<gridrgb[i].y<<','<<gridrgb[i].z<<std::endl;
 
-			if (maxx < x || minx > x)
-			{
-				std::cerr<<"i: "<<i<<std::endl;
-				std::cerr<<x<<std::endl;
-				std::cerr<<y<<std::endl;
-				std::cerr<<gridz[i]<<std::endl;
-			}
-			else if (maxy < y || miny > y)
-			{				
-				std::cerr<<"i: "<<i<<std::endl;
-				std::cerr<<x<<std::endl;
-				std::cerr<<y<<std::endl;
-				std::cerr<<gridz[i]<<std::endl;
-			}
-			else if (maxz < gridz[i] || minz > gridz[i])
-			{				
-				std::cerr<<"i: "<<i<<std::endl;
-				std::cerr<<x<<std::endl;
-				std::cerr<<y<<std::endl;
-				std::cerr<<gridz[i]<<std::endl;
-			}
+			// if (maxx < x || minx > x)
+			// {
+			// 	std::cerr<<"i: "<<i<<std::endl;
+			// 	std::cerr<<x<<std::endl;
+			// 	std::cerr<<y<<std::endl;
+			// 	std::cerr<<gridz[i]<<std::endl;
+			// }
+			// else if (maxy < y || miny > y)
+			// {				
+			// 	std::cerr<<"i: "<<i<<std::endl;
+			// 	std::cerr<<x<<std::endl;
+			// 	std::cerr<<y<<std::endl;
+			// 	std::cerr<<gridz[i]<<std::endl;
+			// }
+			// else if (maxz < gridz[i] || minz > gridz[i])
+			// {				
+			// 	std::cerr<<"i: "<<i<<std::endl;
+			// 	std::cerr<<x<<std::endl;
+			// 	std::cerr<<y<<std::endl;
+			// 	std::cerr<<gridz[i]<<std::endl;
+			// }
 
 			// std::cerr<<x<<','<<y<<','<<gridz[i]<<std::endl;
 

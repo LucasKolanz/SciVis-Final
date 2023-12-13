@@ -26,8 +26,8 @@
 #include <filesystem>
 
 Polyhedron* poly = nullptr;
-Polyhedron* poly2 = nullptr;
-Polyhedron* dummy_poly = nullptr;
+Polyhedron* ptCloud = nullptr;
+Polyhedron* surface = nullptr;
 std::vector<POLYLINE> polylines;
 std::vector<CPOINT> points;
 
@@ -936,7 +936,7 @@ void GLWidget::initializeGL() {
 	if (err != GLEW_OK) {
 		printf("%s", glewGetErrorString(err));
 	}
-
+	
 	std::string NEON_file = "../SciVis/data/NEON_data/NEON_D16_ABBY_DP1_554000_5069000_test.ply"; 
 	
 	if (std::filesystem::exists(NEON_file))
@@ -953,6 +953,8 @@ void GLWidget::initializeGL() {
 		return;
 	}
 	init();
+	togglePtcloud();
+
 	// openFile("../SciVis/data/scalar_data/r12.ply");
 	// std::cerr<<std::filesystem::current_path()<<std::endl;
 	// getchar();
@@ -961,12 +963,30 @@ void GLWidget::initializeGL() {
 
 void GLWidget::togglePtcloud() {
 	// plotVertexPoints();
-	if (poly2 == nullptr)
+
+	if (surface == nullptr)
 	{
-		poly2=poly->ptcloud_to_quads(2.5,2.5);
+		ptCloud = poly;
+		surface=ptCloud->ptcloud_to_quads(dx,dy);
 	}
-	dummy_poly = poly;
-	poly = poly2;
-	poly2 = dummy_poly;
+
+	if (pointcloudOn)
+	{
+		poly = surface;
+	}
+	else
+	{
+		poly = ptCloud;
+	}
 	pointcloudOn = !pointcloudOn;
+}
+
+void GLWidget::reapply()
+{
+	surface->finalize();
+	free(surface);
+	surface = nullptr;
+	surface=ptCloud->ptcloud_to_quads(dx,dy);
+	poly = surface;
+	update();
 }

@@ -19,7 +19,11 @@ public:
 public:
 	bool m_select_face;
 	bool m_select_vertex;
-	bool pointcloudOn = true;
+	bool pointcloudOn = true; //initialize to true because data in initially loaded only as point cloud
+
+	double dx = 2.5;
+	double dy = 2.5;
+	double n_contours = 100;
 
 	void openFile(const char* file);
 
@@ -31,6 +35,8 @@ public:
 	void algorithm6();
 	void algorithm7();
 	void algorithm8();
+
+	void reapply();
 
     void vertexColor();
     void togglePtcloud();

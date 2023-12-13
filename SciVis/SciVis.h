@@ -3,6 +3,14 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_SciVis.h"
 
+//Max and min values for spinboxes
+#define MAX_DX 200
+#define MIN_DX 0.25
+#define MAX_DY 200
+#define MIN_DY 0.25
+#define MAX_CONTOURS 250
+#define MIN_CONTOURS 1 
+
 class SciVis : public QMainWindow
 {
     Q_OBJECT
@@ -20,6 +28,11 @@ public slots:
 	void on_pushButton_display_wireframes_clicked();
 	void on_pushButton_display_vertex_clicked();
 	void on_pushButton_display_pointcloud_clicked();
+
+	void on_doubleSpinBox_dx_valueChanged(double value);
+    void on_doubleSpinBox_dy_valueChanged(double value);
+    void on_spinBox_cont_valueChanged(int value);
+    void on_pushButton_apply_clicked();
 
 
 	void on_pushButton_code1_clicked();
