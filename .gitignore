@@ -4,6 +4,7 @@ CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
 Makefile
+.vs/
 *.make
 
 # Compiled Object files
