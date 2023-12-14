@@ -965,7 +965,7 @@ void GLWidget::initializeGL() {
 
 	std::string NEON_file = ""; 
 
-	//find NEON_folder
+	//find NEON_folder and get the first .ply file we can find
 	int count = 0;
 	while(!std::filesystem::exists(NEON_folder) && count <= 5)
 	{
@@ -982,7 +982,6 @@ void GLWidget::initializeGL() {
 		exit(-3);
 	}
 
-	std::cerr<<NEON_file<<std::endl;
 	openFile(NEON_file.c_str());
 	init();
 	togglePtcloud();

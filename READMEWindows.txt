@@ -19,4 +19,8 @@ Build:
 	If you get the message "Unable to start program . . . The system cannot find the file specified" then just get out
 	of Visual Studio and navigate to the folder the executable is in. It should be in "${path to program}SciVis-Final\build\Release
 
-6) Now you should have the scivis.exe file and be able to run it, hopefully.
+6) Now you should have the scivis.exe file and be able to run it, hopefully**.
+
+** If the windows version seg faults during data loading, just be persistant and run it 
+	several times. One of those times, it'll get past loading and you will be good.
+	This problem doesn't happen on the Linux version.
